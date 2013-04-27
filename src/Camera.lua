@@ -42,6 +42,8 @@ end
 function Unit:set_position(x, y)
 	self.x=x
 	self.y=y
+	self.x_target=x
+	self.y_target=y
 end
 
 function Unit:target(x, y)
@@ -127,6 +129,10 @@ end
 
 function set(cam)
 	data.cam=cam
+end
+
+function set_position(x, y)
+	data.cam:set_position(x, y)
 end
 
 function target(x, y)
