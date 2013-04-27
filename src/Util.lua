@@ -50,8 +50,14 @@ function last(table)
 	return table[#table]
 end
 
+function debug_sub(sub, msg, ...)
+	if true==sub then
+		print("debug: "..msg, ...)
+	end
+end
+
 function debug(msg, ...)
-	if true==State.debug_mode then
+	if true==State.debug then
 		print("debug: "..msg, ...)
 	end
 end

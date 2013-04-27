@@ -8,8 +8,8 @@ function love.conf(t)
 	t.identity=t.title.."-save"
 	t.release=false
 
-	t.screen.width=1024
-	t.screen.height=768
+	t.screen.width=1440
+	t.screen.height=900
 	t.screen.fullscreen=false
 	t.screen.vsync=true
 	t.screen.fsaa=0

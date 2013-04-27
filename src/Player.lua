@@ -5,59 +5,81 @@ require("src/Util")
 require("src/Camera")
 
 require("src/Data")
-require("src/Sentient")
+
+Dir={
+	Up=1,
+	Down=2,
+	Left=3,
+	Right=4
+}
 
 -- Player interface
 
 local data={
 	__initialized=false,
-	sentient=nil,
+	x=nil,y=nil,
+	rx=nil,ry=nil,
 	tris=nil,
-	rx=nil,ry=nil
+	activation_queued=nil
 }
 
 function init(x, y, color)
 	assert(not data.__initialized)
 
-	data.sentient=Sentient.new(x, y, color)
-	data.tris={}
-	set_position(x, y)
+	Player.set_position(x, y)
+	Player.reset(color)
 
 	data.__initialized=true
 end
 
-function reset(color)
-	data.sentient:reset(data.sentient.x, data.sentient.y, color)
+function reset(color, hx, hy)
+	data.color=color
 	data.tris={}
+	data.activation_queued=false
+	if hx and hy then
+		data.rx, data.ry=Data.tile_rpos(hx, hy)
+	end
+	Camera.set_position(data.rx+Data.HW, data.ry+Data.HH)
 end
 
 function update(dt)
-	data.sentient:update(dt)
 	Camera.target(data.rx+Data.HW, data.ry+Data.HH)
 end
 
-function render(beneath)
-	data.sentient:render(true)
+function render()
+	Data.render_tile_abs(data.color, data.rx, data.ry, true)
 end
 
 function get_x()
-	return data.sentient.x
+	return data.x
 end
 
 function get_y()
-	return data.sentient.y
+	return data.y
 end
 
 function get_color()
-	return data.sentient.color
+	return data.color
 end
 
-function get_sentient()
-	return data.sentient
+function queue_activation()
+	data.activation_queued=true
+end
+
+function remove_activation_queue()
+	data.activation_queued=false
+end
+
+function has_activation_queued()
+	return data.activation_queued
+end
+
+function set_color(color)
+	data.color=color
 end
 
 function set_position(x, y)
-	data.sentient.x=x
-	data.sentient.y=y
-	data.rx, data.ry=Data.tile_rpos(data.sentient.x, data.sentient.y)
+	data.x=x
+	data.y=y
+	data.rx, data.ry=Data.tile_rpos(data.x, data.y)
 end

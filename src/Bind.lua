@@ -78,13 +78,15 @@ local function trigger(bind, ident, dt, kind)
 	end
 end
 
-local function bind_press(ident)
+local function bind_press(ident, _)
 	local bind=data.binds[ident]
 	if nil~=bind then
 		if bind.on_press then
 			trigger(bind, ident, 0.0, Kind.Press)
+		else
+			exec_gate(bind, ident, 0.0, Kind.Press)
 		end
-		if bind.on_active then
+		if bind.on_active and exec_gate(bind, ident, 0.0, Kind.Active) then
 			data.active[ident]=bind
 		end
 	else
@@ -95,11 +97,13 @@ end
 local function bind_release(ident)
 	local bind=data.binds[ident]
 	if nil~=bind then
+		if bind.on_active and exec_gate(bind, ident, 0.0, Kind.Active) then
+			data.active[ident]=nil
+		end
 		if bind.on_release then
 			trigger(bind, ident, 0.0, Kind.Release)
-		end
-		if bind.on_active then
-			data.active[ident]=nil
+		else
+			exec_gate(bind, ident, 0.0, Kind.Release)
 		end
 	else
 		exec_gate(nil, ident, 0.0, Kind.Release)
@@ -166,12 +170,17 @@ function update(dt)
 	end
 end
 
-function love.keypressed(key, unicode)
-	bind_press(key, unicode)
+function clear_active()
+	data.active={}
 end
 
-function love.keyreleased(key, unicode)
-	bind_release(key, unicode)
+-- LÖVE sinks
+function love.keypressed(key, _)
+	bind_press(key, _)
+end
+
+function love.keyreleased(key)
+	bind_release(key, nil)
 end
 
 function love.mousepressed(x, y, button)

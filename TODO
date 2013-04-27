@@ -1,21 +1,45 @@
 TODO
 
+-	No tris? Lose color channels when activating sinks?
+	Sink circuits take one channel each, combine at
+	end of sequence?
+
+-	bind space to place tris or activate triggers.
+
+Asset:
+-	sound.player_no_drop_channel:
+	error effect when player tries to drop last color
+	channel into sink
+
 World:
--	need to hint to Sentient.Bucket:render
-	(and Sentient.Unit:render) the tile beneath
-
--	Hot loading. Data is going to take up too much
-	memory. Remember to cache worlds if the player
-	is able to switch worlds within a session.
-
 -	Considerations for player position if world
 	jumping is used. (well, just do it anyways)
+	???
 
-Sentient:
--	Path? Type? What sort of traits?
+-	Quick decay on world change?
+	All tiles decrease in size to center?
+	Just player?
+
+-	/Message: don't show text if starter on entered()
+	when resetting
 
 Trigger:
+-	make all triggers optionally kill player;
+	reset World state and respawn
 
-Sink:
--	has-a Sentient. (for why?)
--	merge-able to Trigger? (most likely)
+-	Timer: changes color of tile on a timer.
+
+-	Recolor: change entire zones/colors to
+	another color. includes color inversion and
+	color-accept inversion.
+
+-	Decay: black plague! cannot encroach white
+	tiles.
+
+-	Sink: circuitry trigger; multiple circuit inputs;
+	only activates when required tri mix is placed
+	on the trigger. use seq of lines to render circuit
+	path. deactivate active circuits if all tiles in
+	the circuit path are not uniform in color.
+	use tri to indicate current color, Black by default.
+

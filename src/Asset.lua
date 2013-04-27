@@ -29,51 +29,37 @@ atlas={
 	}--]]
 },
 
-anim={
-	--[[moving_square={
-		duration=0.05,
-		size={32,32},
-		set={
-			{8}, -- normal set
-			{8}  -- reverse set
-		}
-	}--]]
-},
+anim={},
 
 sound={
-	--[[waaauu={
-		InstancePolicy.Reserve,
-		limit=10
-	}--]]
+
+-- player
+
+	player_move
+		={InstancePolicy.Constant, limit=4},
+	player_spawn
+		={InstancePolicy.Constant, limit=4},
+
+-- triggers
+
+	--trigger_message_activate
+	--	={InstancePolicy.Constant, limit=1},
+
+	trigger_switch_activate_1
+		={InstancePolicy.Reserve, limit=10},
+
+-- TODO: This thing SUCKS
+	trigger_change_world_activate
+		={InstancePolicy.Constant, limit=1},
 },
 
 world={
-	world_1={}
+	start={},
+	a_bit_switchy={},
+	--apples_to_me={},
 }
 
 } -- desc_root
 
 -- hooklets
-
-hooklet={
-	--[[KUMQUAT={
-		text="that's a kumquat!",
-		color={255,255,255},
-		duration=1.4,
-		trans={
-			["tx"]={
-				{0.0, 24.0},
-				{0.0,-24.0}
-			},
-			["ty"]={
-				{0.0, 8.0},
-				{0.0,-8.0}
-			},
-			[{"sx", "sy"}]={1.4,0.8},
-			["angle"]={
-				{0.0, 1.2},
-				{0.0,-1.2}
-			}
-		}
-	}--]]
-} -- hooklet
+-- hooklet={}

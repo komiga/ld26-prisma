@@ -7,16 +7,19 @@ require("src/Bind")
 require("src/Camera")
 require("src/AudioManager")
 require("src/FieldAnimator")
-require("src/Hooker")
-require("src/Animator")
+--require("src/Hooker")
+--require("src/Animator")
 require("src/AssetLoader")
 require("src/Asset")
 
 require("src/Data")
 require("src/Presenter")
-require("src/World")
-require("src/Sentient")
+require("src/Trigger")
+require("src/Trigger/Message")
+require("src/Trigger/ChangeWorld")
+require("src/Trigger/Switch")
 require("src/Player")
+require("src/World")
 
 binds={
 	["escape"]={
@@ -38,73 +41,115 @@ binds={
 			end
 		end
 	},
+	["f1"]={
+		on_release=true,
+		handler=function(_, _, _, _)
+			World.reset()
+		end
+	},
+	["f2"]={
+		on_release=true,
+		handler=function(_, _, _, _)
+			State.trg_debug=not State.trg_debug
+			if State.trg_debug then
+				print("trigger debug mode enabled")
+			else
+				print("trigger debug mode disabled")
+			end
+		end
+	},
+	["f3"]={
+		on_release=true,
+		handler=function(_, _, _, _)
+			State.gfx_debug=not State.gfx_debug
+			State.sfx_debug=not State.sfx_debug
+			print("graphics and audio debug modes toggled")
+		end
+	},
 	["f4"]={
 		on_release=true,
 		handler=function(_, _, _, _)
-			State.debug_mode=not State.debug_mode
-			if State.debug_mode then
+			State.debug=not State.debug
+			if State.debug then
 				print("debug mode enabled")
 			else
 				print("debug mode disabled")
 			end
 		end
 	},
+	[" "]={
+		on_release=true,
+		handler=function(_, _, _, _)
+			--Util.debug("queue_activation")
+			Player.queue_activation()
+		end
+	},
+	-- FIXME: disallow both wasd+arrows in a single update;
+	-- remove arrow keys or wasd?
 	[{"up",'w', "down",'s', "left",'a', "right",'d'}]={
-		time=0.0,
+		ttable={
+			["up"]   =Player.Dir.Up   , ['w']=Player.Dir.Up,
+			["down"] =Player.Dir.Down , ['s']=Player.Dir.Down,
+			["left"] =Player.Dir.Left , ['a']=Player.Dir.Left,
+			["right"]=Player.Dir.Right, ['d']=Player.Dir.Right
+		},
+		time={
+			[Player.Dir.Up]=0.0  , [Player.Dir.Down]=0.0,
+			[Player.Dir.Left]=0.0, [Player.Dir.Right]=0.0
+		},
+		duration=0.125,
 		on_press=true,
 		on_active=true,
 		handler=function(ident, dt, kind, bind)
+			local dir=bind.ttable[ident]
 			-- FIXME: Hacky hackerton
 			if Bind.Kind.Active==kind then
-				bind.time=bind.time+dt
-				if 0.2<=bind.time then
-					bind.time=bind.time-0.2
+				bind.time[dir]=bind.time[dir]+dt
+				if bind.duration<=bind.time[dir] then
+					bind.time[dir]=bind.time[dir]-bind.duration
 				else
 					return
 				end
 			elseif Bind.Kind.Press==kind then
-				bind.time=-0.2
+				-- Mc hacksters
+				bind.time[dir]=-bind.duration
 			end
-			local dir=0
-			if "up"==ident or "w"==ident then
-				dir=World.Dir.Up
-			elseif "down"==ident or "s"==ident then
-				dir=World.Dir.Down
-			elseif "left"==ident or "a"==ident then
-				dir=World.Dir.Left
-			elseif "right"==ident or "d"==ident then
-				dir=World.Dir.Right
-			end
-			if 0~=dir then
-				World.move_player(dir)
-			end
+			World.move_player(dir)
 		end
 	}
 }
 
 function bind_trigger_gate(_, ident, _, kind)
 	--[[Util.debug(
-		"bind_trigger_gate: ident: "..ident,
-		"Presenter: ", Presenter.is_active(), Presenter.is_ending()
+		"bind_trigger_gate: ident: "..ident.." kind: "..kind,
+		"Presenter: ", Presenter.is_active(), Presenter.is_ending(),
+		"change_world_lock: ", State.change_world_lock
 	)--]]
 	if State.paused then
+		return false
+	elseif true==State.change_world_lock then
+		if Bind.Kind.Release==kind then
+			State.change_world_lock=false
+		end
 		return false
 	elseif
 		"pause"~=ident and
 		Presenter.is_active() and
 		not Presenter.is_ending()
 	then
-		Presenter.stop()
+		if Bind.Kind.Release==kind then
+			Presenter.stop()
+		end
 		return false
 	end
 	return true
 end
 
-function init(_)
-	-- Ensure debug_mode is enabled for initialization
+function init(arg)
+	-- Ensure debug is enabled for initialization
 	local debug_mode_temp=false
-	if not State.debug_mode then
-		State.debug_mode=true
+	if not State.debug then
+		State.debug=true
 		debug_mode_temp=true
 	end
 
@@ -119,18 +164,19 @@ function init(_)
 
 	-- assets
 	AssetLoader.load("asset/", Asset.desc_root, Asset)
-	Hooker.init(Asset.hooklet, Asset.font.main)
+	--Hooker.init(Asset.hooklet, Asset.font.main)
 
-	Animator.init(Asset.anim)
+	--Animator.init(Asset.anim)
 	AudioManager.init(Asset.sound)
 
-	Camera.init(0,0, 0,0)
+	-- more systems
+	Camera.init(0,0, 320,320)
 
 	Presenter.init(Asset.font.presenter)
 
-	Sentient.init()
 	Player.init(1, 1, Data.Color.Red)
-	World.init(Asset.world, Asset.world.world_1)
+	local world_name=Util.optional(arg[2], "start")
+	World.init(Asset.world, Asset.world[world_name])
 
 	-- default rendering state
 	Gfx.setFont(Asset.font.main)
@@ -141,9 +187,9 @@ function init(_)
 	Gfx.setLineWidth(2.0)
 	--Gfx.setLineStyle("smooth")
 
-	-- Ensure debug_mode is disabled after initialization
+	-- Ensure debug is disabled after initialization
 	if debug_mode_temp then
-		State.debug_mode=false
+		State.debug=false
 	end
 end
 
@@ -169,29 +215,22 @@ function update(dt)
 		Bind.update(0.0)
 	else
 		Bind.update(dt)
-		Hooker.update(dt)
+		--Hooker.update(dt)
 		AudioManager.update(dt)
 		Presenter.update(dt)
-		World.update(dt)
+		World.current():update(dt)
 		Camera.update(dt)
 	end
 end
 
 function render()
 	Camera.lock()
-		World.render()
-		Hooker.render()
-
-		Gfx.setColor(0,0,0, 255)
-		Gfx.point(
-			Camera.rel_x(0),
-			Camera.rel_y(0)
-		)
+		World.current():render()
 	Camera.unlock()
 
 	Presenter.render()
 
-	if State.debug_mode then
+	if State.gfx_debug then
 		Gfx.setColor(255,255,255, 255)
 		Gfx.rectangle("line",
 			0.0,0.0, Core.display_width, Core.display_height

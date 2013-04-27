@@ -81,7 +81,9 @@ function Bucket:spawn(x, y, z)
 	end
 	if nil~=inst then
 		table.insert(self.active, inst)
-		Util.debug("SoundInstance started: "..#self.active)
+		Util.debug_sub(State.sfx_debug,
+			"sound spawned: "..self.data.__name..": "..#self.active
+		)
 		inst:play()
 	end
 end
@@ -91,9 +93,8 @@ function Bucket:update(dt)
 	if 0<#self.active then
 		for i, inst in pairs(self.active) do
 			if not inst:update(dt) then
-				Util.debug(
-					"SoundInstance finished: "..i..
-					" count="..self.count
+				Util.debug_sub(State.sfx_debug,
+					"sound ended: "..self.data.__name..": "..i
 				)
 				table.remove(self.active, i)
 				if
@@ -101,10 +102,10 @@ function Bucket:update(dt)
 					or (InstancePolicy.Reserve==policy
 						and self.count<=self.data.limit)
 				then
-					Util.debug("  (kept)")
+					Util.debug_sub(State.sfx_debug, "  (kept)")
 					table.insert(self.free, inst)
 				else
-					Util.debug("  (murdered)")
+					Util.debug_sub(State.sfx_debug, "  (murdered)")
 					self.count=self.count-1
 				end
 			end

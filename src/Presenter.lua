@@ -5,14 +5,23 @@ require("src/Util")
 require("src/FieldAnimator")
 require("src/Bind")
 
+local TransMode={
+	Static=1,
+	In=2,
+	Out=3
+}
+
 local data={
 	__initialized=false,
 	font=nil,
 	color={255,255,255},
 	base_alpha=240,
 
+	trans_in=nil,
+	trans_out=nil,
+	trans_mode=nil,
+
 	active=nil,
-	ending=nil,
 	anim=nil,
 	message=nil,
 	hw=nil, hh=nil
@@ -24,12 +33,15 @@ function init(font)
 
 	data.font=font
 
+	data.trans_in={0, data.base_alpha}
+	data.trans_out={data.base_alpha, 0}
+
 	data.active=false
-	data.ending=false
+	data.trans_mode=TransMode.Static
 	data.anim=FieldAnimator.new(
 		0.25,
 		{alpha=data.base_alpha},
-		{["alpha"]={data.base_alpha, 0}},
+		{["alpha"]=data.trans_in},
 		FieldAnimator.Mode.Continue
 	)
 	data.message="blblbl"
@@ -43,14 +55,14 @@ function is_active()
 end
 
 function is_ending()
-	return data.ending
+	return TransMode.Out==data.trans_mode
 end
 
 function update(dt)
-	if data.active and data.ending then
+	if data.active and TransMode.Static~=data.trans_mode then
 		if data.anim:update(dt) then
-			data.active=false
-			data.ending=false
+			data.active=(TransMode.Out~=data.trans_mode)
+			data.trans_mode=TransMode.Static
 		end
 	end
 	return data.active
@@ -60,13 +72,13 @@ end
 function render()
 	if data.active then
 		local alpha=Util.ternary(
-			data.ending,
-			data.anim.fields.alpha, data.base_alpha
+			TransMode.Static==data.trans_mode,
+			data.base_alpha, data.anim.fields.alpha
 		)
 		local x=Core.display_width_half -data.hw
 		local y=Core.display_height_half-data.hh
 
-		-- TODO: banner needs more weight
+		-- TODO: needs more weight
 		Gfx.setColor(0,0,0, alpha)
 		Gfx.rectangle("fill",
 			--0.0, y-(0.5*Core.display_height_half)+data.hh,
@@ -81,20 +93,27 @@ function render()
 	end
 end
 
-function start(message)
+function start(message, fade_in)
 	Util.debug("Presenter.start()")
 	data.active=true
-	data.ending=false
+	data.trans_mode=TransMode.Static
 	data.message=message
 
 	data.hw=0.5*data.font:getWidth(data.message)
 	data.hh=0.5*data.font:getHeight(data.message)
+
+	if fade_in then
+		data.trans_mode=TransMode.In
+		data.anim.trans["alpha"]=data.trans_in
+		data.anim:reset()
+	end
 end
 
 function stop()
 	Util.debug("Presenter.stop()")
-	if data.active and not data.ending then
-		data.ending=true
+	if data.active and not Presenter.is_ending() then
+		data.trans_mode=TransMode.Out
+		data.anim.trans["alpha"]=data.trans_out
 		data.anim:reset()
 	end
 end

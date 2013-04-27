@@ -12,7 +12,7 @@ local Kind={}
 local function get_asset_path(root_path, path, name, ext)
 	Util.tcheck(path, "string", true)
 	if nil==path then
-		return root_path..name..'.'..ext
+		return root_path..name..(nil~=ext and '.'..ext or "")
 	else
 		return root_path..string.gsub(path, '@', name)
 	end
@@ -27,7 +27,7 @@ where 'ext' is the default extension for the asset kind. 'ext' can be
 used to override the default extension.
 
 All assets except for fonts (that is, all tables) will have a unique
-integer value '__id'.
+integer value '__id' and '__name' set to the asset's name.
 
 ]]
 
@@ -309,20 +309,20 @@ Kind.sound={
 
 --[[
 
-	name={
-		size={32, 32}
-	}
-
-'size' is the {width, height} pair.
+These descriptors are empty tables. World/Data handle hot-loading.
 
 --]]
 Kind.world={
 	slug="world/",
 	loader=function(root_path, name, desc)
-		local path=get_asset_path(
-			root_path, desc.path, name, desc.ext or "wrl"
-		)
-		return dofile(path)
+		local shell_data={
+			__data=nil,
+			__image_data=nil,
+			__path=get_asset_path(
+				root_path, desc.path, name, nil
+			)
+		}
+		return shell_data
 	end
 }
 
@@ -342,6 +342,7 @@ local function load_kind(id, root_path, kind_name, desc_table, asset_table)
 		local asset=kind.loader(root_path, name, desc)
 		if "table"==type(asset) then
 			asset.__id=id
+			asset.__name=name
 			id=id+1
 		end
 		assert(nil==asset_table[kind_name][name])

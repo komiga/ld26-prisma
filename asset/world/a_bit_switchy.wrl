@@ -1,0 +1,40 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=32,32
+local SP_C=C.Red
+
+local ED_X, ED_Y=63,32
+local ED_C=C.Green
+local ED_N="start"
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	{
+		"Mode switching is necessary at times.",
+		starter=true
+	}
+)
+
+D.M_TR(
+	W, 32,9,
+	TT.Switch,
+	{C.Green},
+	C.Red
+)
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	{ED_N},
+	ED_C
+)
