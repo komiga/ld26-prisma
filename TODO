@@ -1,0 +1,21 @@
+TODO
+
+World:
+-	need to hint to Sentient.Bucket:render
+	(and Sentient.Unit:render) the tile beneath
+
+-	Hot loading. Data is going to take up too much
+	memory. Remember to cache worlds if the player
+	is able to switch worlds within a session.
+
+-	Considerations for player position if world
+	jumping is used. (well, just do it anyways)
+
+Sentient:
+-	Path? Type? What sort of traits?
+
+Trigger:
+
+Sink:
+-	has-a Sentient. (for why?)
+-	merge-able to Trigger? (most likely)
