@@ -112,10 +112,11 @@ __iw=nil
 
 function load_data(shell_data)
 	if nil==shell_data.__image_data then
-		shell_data.__image_data=love.image.newImageData(
+		local image_data=love.image.newImageData(
 			shell_data.__path..".png"
 		)
-		shell_data.__data=init_data(shell_data)
+		shell_data.__data=init_data(shell_data, image_data)
+		image_data=nil
 	end
 	if not shell_data.loaded_dynamic then
 		Data.__iw=shell_data.__data
@@ -139,10 +140,10 @@ local function rgb_match(r,g,b)
 	assert(false)
 end
 
-function init_data(shell_data)
+function init_data(shell_data, image_data)
 	local wd={
-		w=shell_data.__image_data:getWidth(),
-		h=shell_data.__image_data:getHeight(),
+		w=image_data:getWidth(),
+		h=image_data:getHeight(),
 		sp_x=1, sp_y=1,
 		spawn_color=spawn_color,
 		loaded_dynamic=false,
@@ -153,7 +154,7 @@ function init_data(shell_data)
 	for y=1, wd.h do
 		wd.tiles[y]={}
 		for x=1, wd.w do
-			r,g,b=shell_data.__image_data:getPixel(x-1, y-1)
+			r,g,b=image_data:getPixel(x-1, y-1)
 			wd.tiles[y][x]=rgb_match(r,g,b)
 		end
 	end

@@ -317,7 +317,6 @@ Kind.world={
 	loader=function(root_path, name, desc)
 		local shell_data={
 			__data=nil,
-			__image_data=nil,
 			__path=get_asset_path(
 				root_path, desc.path, name, nil
 			)
