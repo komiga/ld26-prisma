@@ -45,11 +45,16 @@ sound={
 	--trigger_message_activate
 	--	={InstancePolicy.Constant, limit=1},
 
-	trigger_switch_activate_1
-		={InstancePolicy.Reserve, limit=10},
-
 -- TODO: This thing SUCKS
 	trigger_change_world_activate
+		={InstancePolicy.Constant, limit=1},
+
+	trigger_switch_activate_1
+		={InstancePolicy.Reserve, limit=5},
+	trigger_switch_activate_2
+		={InstancePolicy.Reserve, limit=5},
+
+	trigger_teleporter_activate
 		={InstancePolicy.Constant, limit=1},
 },
 
@@ -57,6 +62,9 @@ world={
 	start={},
 	a_bit_switchy={},
 	--apples_to_me={},
+	--bupkis={},
+	--quack={},
+	--circuit={},
 }
 
 } -- desc_root

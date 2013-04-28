@@ -18,6 +18,7 @@ require("src/Trigger")
 require("src/Trigger/Message")
 require("src/Trigger/ChangeWorld")
 require("src/Trigger/Switch")
+require("src/Trigger/Teleporter")
 require("src/Player")
 require("src/World")
 

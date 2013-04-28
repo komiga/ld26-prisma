@@ -5,11 +5,11 @@ local TT=D.TriggerType
 
 local W=D.__iw
 
-local SP_X, SP_Y=32,32
-local SP_C=C.Red
+local SP_X, SP_Y=16,32
+local SP_C=C.Green
 
-local ED_X, ED_Y=63,32
-local ED_C=C.Green
+local ED_X, ED_Y=22,1
+local ED_C=C.Orange
 local ED_N="start"
 
 D.S_SP(W, SP_X,SP_Y, SP_C)
@@ -19,15 +19,47 @@ D.M_TR(
 	W, SP_X,SP_Y,
 	TT.Message,
 	{
-		"Mode switching is necessary at times.",
+		"Let's try something new.",
 		starter=true
 	}
 )
 
 D.M_TR(
-	W, 32,9,
+	W, 16,21,
+	TT.Message,
+	{
+		"Have some switches.",
+		starter=false
+	}
+)
+
+-- Switches
+D.M_TR(
+	W, 13,22,
 	TT.Switch,
-	{C.Green},
+	{C.Red},
+	SP_C
+)
+
+D.M_TR(
+	W, 19,22,
+	TT.Switch,
+	{C.Orange},
+	C.Red
+)
+
+-- Teleporter
+--[[D.M_TR(
+	W, 10,1,
+	TT.Teleporter,
+	{SP_X,SP_Y},
+	C.Red
+)--]]
+
+D.M_TR(
+	W, 10,1,
+	TT.ChangeWorld,
+	{"start"},
 	C.Red
 )
 

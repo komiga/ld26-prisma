@@ -9,6 +9,7 @@ require("src/State")
 require("src/Data")
 require("src/Trigger")
 require("src/Player")
+require("src/Camera")
 
 -- class World
 
@@ -50,13 +51,14 @@ function Unit:reset()
 		--Presenter.stop()
 	end
 
-	Player.reset(self.data.spawn_color, Data.G_SP(self.data))
-	self:position_player(Data.G_SP(self.data))
+	local sx,sy=Data.G_SP(self.data)
+	Player.reset(self.data.spawn_color, sx, sy)
+	self:position_player(sx, sy, false)
 	AudioManager.spawn(Asset.sound.player_spawn)
 	self.__initializing=false
 end
 
-function Unit:in_bounds(tx, ty)
+function Unit:in_bounds(tx,ty)
 	return
 		(self.data.w>=tx and 1<=tx) and
 		(self.data.h>=ty and 1<=ty)
@@ -138,7 +140,7 @@ function Unit:color_player(color, colorize_tile)
 	Player.set_color(color)
 end
 
-function Unit:position_player(nx,ny)
+function Unit:position_player(nx,ny, camera_immediate)
 	if
 		self:in_bounds(nx,ny) and
 		Data.AC(
@@ -147,6 +149,10 @@ function Unit:position_player(nx,ny)
 		)
 	then
 		Player.set_position(nx,ny)
+		if camera_immediate then
+			local rx,ry=Data.tile_rpos(nx,ny)
+			Camera.set_position(rx+Data.HW,ry+Data.HH)
+		end
 		for _, trg in pairs(self.triggers) do
 			if nx==trg.data.tx and ny==trg.data.ty then
 				trg:entered(nx,ny)
@@ -166,7 +172,7 @@ function Unit:move_player(dir)
 		=Player.get_y()+
 		((Player.Dir.Up==dir)   and -1 or
 		((Player.Dir.Down==dir) and  1 or 0))
-	if self:position_player(nx, ny) then
+	if self:position_player(nx,ny, false) then
 		AudioManager.spawn(Asset.sound.player_move)
 		return true
 	else

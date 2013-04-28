@@ -24,11 +24,12 @@ function Message:__init(trd)
 	Util.tcheck(trd.props[1], "string")
 
 	self.data=trd
+	self.state=TriggerState.Unviewed
 	self:reset()
 end
 
 function Message:reset()
-	self.state=TriggerState.Unviewed
+	--self.state=TriggerState.Unviewed
 end
 
 function Message:is_active()

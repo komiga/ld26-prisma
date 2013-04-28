@@ -13,6 +13,7 @@ GenericState={
 require("src/Trigger/Message")
 require("src/Trigger/ChangeWorld")
 require("src/Trigger/Switch")
+require("src/Trigger/Teleporter")
 
 -- Trigger interface
 
@@ -24,6 +25,7 @@ local TriggerInstantiator={
 	[Data.TriggerType.Message]=Trigger.new_message,
 	[Data.TriggerType.ChangeWorld]=Trigger.new_change_world,
 	[Data.TriggerType.Switch]=Trigger.new_switch,
+	[Data.TriggerType.Teleporter]=Trigger.new_teleporter,
 }
 
 function new(trd)

@@ -28,6 +28,7 @@ Trigger:
 	reset World state and respawn
 
 -	Timer: changes color of tile on a timer.
+	(this is cool. can be tied with, say, a Switch.)
 
 -	Recolor: change entire zones/colors to
 	another color. includes color inversion and

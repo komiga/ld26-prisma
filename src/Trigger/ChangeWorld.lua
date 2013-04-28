@@ -40,7 +40,7 @@ end
 
 function ChangeWorld:entered()
 	if TriggerState.Active==self.state then
-		Util.debug(
+		Util.debug_sub(State.trg_debug,
 			"Trigger.ChangeWorld:update: activated "..self.data.props[1]
 		)
 		self:activate()
@@ -52,8 +52,12 @@ function ChangeWorld:update(dt, px,py)
 	return self:is_active()
 end
 
-function ChangeWorld:render(px, py)
-	-- TODO: SOMETHING?
+function ChangeWorld:render(px,py)
+	Data.render_tile_inner_circle(
+		Data.Color.Black,
+		self.data.tx, self.data.ty,
+		true
+	)
 end
 
 function ChangeWorld:is_active()

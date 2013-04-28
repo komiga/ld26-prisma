@@ -30,6 +30,7 @@ function Switch:reset()
 	-- NB: World state should be reset if this is called, so we don't
 	-- have to reset the tile
 	self.state=TriggerState.Active
+	self.sound='1'
 	self.color=self.data.props[1]
 end
 
@@ -39,7 +40,8 @@ end
 
 function Switch:activate()
 	Util.debug_sub(State.trg_debug, "Trigger.Switch:activate")
-	AudioManager.spawn(Asset.sound.trigger_switch_activate_1)
+	AudioManager.spawn(Asset.sound["trigger_switch_activate_"..self.sound])
+	self.sound=Util.ternary('1'==self.sound, '2', '1')
 	local tc=self.color
 	self.color=World.tile(self.data.tx, self.data.ty)
 	World.color_player(tc, true)

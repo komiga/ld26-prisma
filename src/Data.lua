@@ -23,8 +23,9 @@ TriggerType={
 	Message=1,
 	ChangeWorld=2,
 	Switch=3,
-	Timer=4,
-	Sink=5
+	Teleporter=4,
+	--Timer=,
+	--Sink=
 }
 
 ColorCount=9
@@ -42,7 +43,7 @@ Color={
 
 -- Combined player colors
 	Aqua=6,
-	Yellow=7,
+	Orange=7,
 	Magenta=8,
 
 -- Special colors
@@ -58,7 +59,8 @@ ColorTable={
 	{0,0,255}, -- Blue
 
 	{0,255,255}, -- Aqua
-	{255,255,0}, -- Yellow
+	{255,127,0}, -- Orange
+	--{255,255,0}, -- Yellow
 	{255,0,255}, -- Magenta
 
 	{96,0,255}	 -- System; blue-purrrrrpel
@@ -74,7 +76,7 @@ ColorTable.Green=ColorTable[Data.Color.Green]
 ColorTable.Blue=ColorTable[Data.Color.Blue]
 
 ColorTable.Aqua=ColorTable[Data.Color.Aqua]
-ColorTable.Yellow=ColorTable[Data.Color.Yellow]
+ColorTable.Orange=ColorTable[Data.Color.Orange]
 ColorTable.Magenta=ColorTable[Data.Color.Magenta]
 
 ColorTable.System=ColorTable[Data.Color.System]
@@ -92,7 +94,7 @@ ColorAccept={
 	[Color.Blue]={[Color.Blue]=true},
 
 	[Color.Aqua]={[Color.Aqua]=true},
-	[Color.Yellow]={[Color.Yellow]=true},
+	[Color.Orange]={[Color.Orange]=true},
 	[Color.Magenta]={[Color.Magenta]=true},
 
 	[Color.System]={}
@@ -257,7 +259,9 @@ end
 
 -- Get render position for tile coords
 function tile_rpos(tx, ty)
-	return (tx-1)*Data.TW, (ty-1)*Data.TH
+	return
+		(tx-1)*Data.TW,
+		(ty-1)*Data.TH
 end
 
 -- Render tile to position
@@ -288,20 +292,36 @@ function render_tile_inner_abs(color, rx,ry, lined)
 			Data.ColorTable[
 			Util.ternary(
 				Data.Color.Black==color,
-				Data.Color.White,
-				Data.Color.Black
+				Data.Color.White, Data.Color.Black
 			)],
 			255
 		)
 		Gfx.rectangle("line",
 			Data.CIW+rx, Data.CIH+ry,
-			Data.TIW    , Data.TIH
+			Data.TIW   , Data.TIH
 		)
 	end
 end
 
 function render_tile_inner(color, tx,ty, lined)
 	Data.render_tile_inner_abs(
+		color,
+		(tx-1)*Data.TW, (ty-1)*Data.TH,
+		lined
+	)
+end
+
+function render_tile_inner_circle_abs(color, rx,ry, lined)
+	--Util.set_color_table(Data.ColorTable[color])
+	--Gfx.circle("fill", Data.CIW+rx, Data.CIH+ry, Data.TIW, 15)
+	if lined then
+		Util.set_color_table(Data.ColorTable.Black, 255)
+		Gfx.circle("line", Data.HW+rx, Data.HH+ry, Data.TIW, 15)
+	end
+end
+
+function render_tile_inner_circle(color, tx,ty, lined)
+	Data.render_tile_inner_circle_abs(
 		color,
 		(tx-1)*Data.TW, (ty-1)*Data.TH,
 		lined
