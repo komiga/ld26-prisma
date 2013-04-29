@@ -17,12 +17,15 @@ local TriggerState=Trigger.GenericState
 local Switch={}
 Switch.__index=Switch
 
-function Switch:__init(trd)
+function Switch:__init(world, trd)
 	Util.tcheck(trd.props, "table")
-	Util.tcheck(trd.props[1], "number")
+	Util.tcheck(trd.props[1], "number") -- start color
 	Data.assert_is_color(trd.props[1])
 
 	self.data=trd
+	self.props=self.data.props
+	self.props.start_color=self.props[1]
+
 	self:reset()
 end
 
@@ -31,44 +34,53 @@ function Switch:reset()
 	-- have to reset the tile
 	self.state=TriggerState.Active
 	self.sound='1'
-	self.color=self.data.props[1]
+	self.color=self.props.start_color
+end
+
+function Switch:set_active(enable)
+	self.state=Util.ternary(
+		enable,
+		TriggerState.Active,
+		TriggerState.Inactive
+	)
 end
 
 function Switch:is_active()
-	return TriggerState.Active==self.state
+	return TriggerState.Inactive~=self.state
 end
 
-function Switch:activate()
+function Switch:activate(world)
 	Util.debug_sub(State.trg_debug, "Trigger.Switch:activate")
 	AudioManager.spawn(Asset.sound["trigger_switch_activate_"..self.sound])
 	self.sound=Util.ternary('1'==self.sound, '2', '1')
 	local tc=self.color
 	self.color=World.tile(self.data.tx, self.data.ty)
 	World.color_player(tc, true)
+	Trigger.__trg_callback(world, self)
 	return self:is_active()
 end
 
-function Switch:entered()
+function Switch:entered(_)
 	return self:is_active()
 end
 
-function Switch:update(dt, px,py)
+function Switch:update(_, dt, px,py)
 	return self:is_active()
 end
 
-function Switch:render(px, py)
+function Switch:render(_, px, py)
 	local c=Util.ternary(
 		self:is_active(),
 		self.color, Data.Color.Black
 	)
 	-- TODO: render lined diamond
 	Data.render_tile_inner(
-		self.color,
+		c,
 		self.data.tx, self.data.ty,
 		true
 	)
 end
 
-function new_switch(trd)
-	return Util.new_object(Switch, trd)
+function new_switch(world, trd)
+	return Util.new_object(Switch, world, trd)
 end

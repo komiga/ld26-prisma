@@ -2,8 +2,8 @@
 module("Asset", package.seeall)
 
 require("src/AudioManager")
-require("src/FieldAnimator")
-require("src/Hooker")
+--require("src/FieldAnimator")
+--require("src/Hooker")
 
 InstancePolicy=AudioManager.InstancePolicy
 
@@ -12,22 +12,12 @@ InstancePolicy=AudioManager.InstancePolicy
 desc_root={
 
 font={
-	-- TODO: get clean monospace font
-	main={12, default=true},
-	-- TODO: FIND ZE PRESENTER FONT
-	presenter={30, default=true}
+	--main={14, default=true},
+	--presenter={30, default=true},
+	presenter={36, path="ropa-sans"},
 },
 
-atlas={
-	--[[sprites={
-		indexed=true,
-		size={32,32},
-		tex={
-			{"a", 0, 0},
-			{"b", 32,0, 32,64}
-		}
-	}--]]
-},
+atlas={},
 
 anim={},
 
@@ -38,33 +28,47 @@ sound={
 	player_move
 		={InstancePolicy.Constant, limit=4},
 	player_spawn
-		={InstancePolicy.Constant, limit=4},
+		={InstancePolicy.Reserve, limit=5},
+	player_killed
+		={InstancePolicy.Reserve, limit=5},
 
 -- triggers
 
 	--trigger_message_activate
 	--	={InstancePolicy.Constant, limit=1},
 
--- TODO: This thing SUCKS
-	trigger_change_world_activate
-		={InstancePolicy.Constant, limit=1},
-
+-- Switch
 	trigger_switch_activate_1
 		={InstancePolicy.Reserve, limit=5},
 	trigger_switch_activate_2
 		={InstancePolicy.Reserve, limit=5},
 
+-- Teleporter
 	trigger_teleporter_activate
-		={InstancePolicy.Constant, limit=1},
+		={InstancePolicy.Constant, limit=4},
+
+-- Timer
+	trigger_timer_activate_1
+		={InstancePolicy.Constant, limit=4},
+
+-- Sink
+	--trigger_sink_activate
+	--	={InstancePolicy.Constant, limit=4},
+
 },
 
 world={
-	start={},
-	a_bit_switchy={},
-	--apples_to_me={},
-	--bupkis={},
-	--quack={},
-	--circuit={},
+	["__debug"]={},
+	["0"]={},
+	["1"]={},
+	["2"]={},
+	["3"]={},
+	["4"]={},
+	["5"]={},
+	["6"]={},
+	["7"]={},
+	["8"]={},
+	["999"]={},
 }
 
 } -- desc_root

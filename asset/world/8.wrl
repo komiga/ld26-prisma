@@ -1,0 +1,101 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=32,16
+local SP_C=C.Red
+
+local ED_X, ED_Y=32,30
+local ED_C=C.Aqua
+local ED_N="999"
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+D.set_reset_callback(W, function(w)
+	w.S={
+		enclosure=w.triggers_by_name["tm_enclosure"]
+	}
+	w.S.enclosure.props.sequence[1]=Data.Color.Red
+	w.S.enclosure.props.sequence[2]=Data.Color.Black
+end)
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_start",
+	{
+		"This is the boss level. Good luck.",
+		starter=true
+	}
+)
+
+-- Enclosure
+D.M_TR(
+	W, 32,5, TT.Timer, "tm_enclosure",
+	{0.8, 0, {C.Red, C.Black},no_sound=false,
+	{
+		{26,10, 38,10},
+		{26,11, 26,21},
+		{38,11, 38,21},
+		{26,22, 38,22}
+	}
+})
+
+function CH_ENC(w, c)
+	w.S.enclosure.props.sequence[1]=Data.Color.Black
+	w.S.enclosure.props.sequence[2]=c
+	w.S.enclosure:set_index(2, false, false)
+end
+
+-- Vertical
+D.M_TR(W, 32, 3, TT.Switch, "sw_top", {C.Green}, C.Red,
+	function(w, trg, _)
+		CH_ENC(w, C.Green)
+	end
+)
+D.M_TR(
+	W, 32,5, TT.Timer, "tm_top",
+	{1.8, 1, {C.Green, C.Red},
+	{{32,5, 32,9}}
+})
+D.M_TR(
+	W, 32,23, TT.Timer, "tm_bottom",
+	{1.8, 0, {C.Aqua, C.Black}, no_sound=true,
+	{{32,23, 32,28}}
+})
+
+-- Horizontal
+D.M_TR(W, 3 ,16, TT.Switch, "sw_left" , {C.Blue}, C.Green,
+	function(w, trg, _)
+		CH_ENC(w, C.Blue)
+	end
+)
+D.M_TR(W, 62,16, TT.Switch, "sw_right", {C.Aqua}, C.Blue,
+	function(w, trg, _)
+		CH_ENC(w, C.Aqua)
+	end
+)
+
+D.M_TR(
+	W, 5,16, TT.Timer, "tm_left",
+	{4.0, 1, {C.Blue, C.Green},
+	{{5,16, 25,16}}
+})
+D.M_TR(
+	W, 38,16, TT.Timer, "tm_right",
+	{4.0, 1, {C.Blue, C.Aqua}, no_sound=true,
+	{{39,16, 60,16}}
+})
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	"cw_end",
+	{ED_N},
+	ED_C
+)

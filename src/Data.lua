@@ -10,9 +10,10 @@ TW, TH=32, 32
 HW, HH=16, 16
 
 -- Inner tile
-TIW, TIH=8, 8
-HIW, HIH=4, 4
-CIW, CIH=12, 12
+TIW, TIH= 8, 8
+HIW, HIH= 4, 4
+CIW, CIH=12,12
+LIW, LIH=12,12
 
 Axis={
 	X=false,
@@ -24,12 +25,9 @@ TriggerType={
 	ChangeWorld=2,
 	Switch=3,
 	Teleporter=4,
-	--Timer=,
-	--Sink=
+	Timer=5,
+	Sink=6
 }
-
-ColorCount=9
-TileColorCount=8
 
 Color={
 -- Non-player colors
@@ -43,12 +41,17 @@ Color={
 
 -- Combined player colors
 	Aqua=6,
-	Orange=7,
-	Magenta=8,
+	Magenta=7,
+	Yellow=8,
 
 -- Special colors
-	System=9
+	System=9,
+
+	WhiteInvisible=10
 }
+
+ColorCount=Data.Color.Yellow
+FullColorCount=Data.WhiteInvisible
 
 ColorTable={
 	{0,0,0}, -- Black
@@ -59,12 +62,12 @@ ColorTable={
 	{0,0,255}, -- Blue
 
 	{0,255,255}, -- Aqua
-	{255,127,0}, -- Orange
-	--{255,255,0}, -- Yellow
 	{255,0,255}, -- Magenta
+	{255,128,0}, -- Yellow
+	--{255,255,0}, -- Yellow
 
-	{96,0,255}	 -- System; blue-purrrrrpel
-	-- {255,127,0}	 -- System; orange
+	{96,0,255},	 -- System; purpley
+	{128,128,128} -- WhiteInvisible; ...invisible
 }
 
 -- Named aliases
@@ -76,53 +79,107 @@ ColorTable.Green=ColorTable[Data.Color.Green]
 ColorTable.Blue=ColorTable[Data.Color.Blue]
 
 ColorTable.Aqua=ColorTable[Data.Color.Aqua]
-ColorTable.Orange=ColorTable[Data.Color.Orange]
+ColorTable.Yellow=ColorTable[Data.Color.Yellow]
 ColorTable.Magenta=ColorTable[Data.Color.Magenta]
 
 ColorTable.System=ColorTable[Data.Color.System]
+ColorTable.WhiteInvisible=ColorTable[Data.Color.WhiteInvisible]
 
 -- TODO: ColorAccept inverse
 
 ColorAccept={
-	[Color.Black]={},
-	[Color.White]={
-		false, true, true, true, true, true, true, true
-	},
+	{},
+	{false,true, true,true,true, true,true,true},
 
-	[Color.Red]={[Color.Red]=true},
-	[Color.Green]={[Color.Green]=true},
-	[Color.Blue]={[Color.Blue]=true},
+	{[Color.Red]=true},
+	{[Color.Green]=true},
+	{[Color.Blue]=true},
 
-	[Color.Aqua]={[Color.Aqua]=true},
-	[Color.Orange]={[Color.Orange]=true},
-	[Color.Magenta]={[Color.Magenta]=true},
+	{[Color.Aqua]=true},
+	{[Color.Magenta]=true},
+	{[Color.Yellow]=true},
 
-	[Color.System]={}
+	{},
+	{false,true, true,true,true, true,true,true, false,true}
+}
+
+ColorOpposite={
+	[Color.Black]=Color.White,
+	[Color.White]=Color.Black,
+
+	[Color.Red]=Color.Aqua,
+	[Color.Green]=Color.Magenta,
+	[Color.Blue]=Color.Yellow,
+
+	[Color.Aqua]=Color.Red,
+	[Color.Magenta]=Color.Green,
+	[Color.Yellow]=Color.Blue,
+
+	[Color.System]=Color.System,
+	[Color.WhiteInvisible]=Color.WhiteInvisible
+}
+
+ColorAdd={
+	{true,true, true,true,true, true,true,true},
+	{},
+
+	{true,true, false,true ,true , false,false,false},
+	{true,true, true ,false,true , false,false,false},
+	{true,true, true ,true ,false, false,false,false},
+
+	{true,true, true ,false,false, false,false,false},
+	{true,true, false,true ,false, false,false,false},
+	{true,true, false,false,true , false,false,false},
+
+	{},
+	{}
+}
+
+ColorAddResult={
+	[Color.Black]={1,2, 3,4,5, 6,7,8},
+	[Color.White]={},
+
+	[Color.Red]  ={3,2, nil,8,7, nil,nil,nil},
+	[Color.Green]={4,2, 8,nil,6, nil,nil,nil},
+	[Color.Blue] ={5,2, 7,6,nil, nil,nil,nil},
+
+	[Color.Aqua]   ={6,2, 2,nil,nil, nil,nil,nil},
+	[Color.Magenta]={7,2, nil,2,nil, nil,nil,nil},
+	[Color.Yellow] ={8,2, nil,nil,2, nil,nil,nil},
+
+	[Color.System]={},
+	[Color.WhiteInvisible]={}
 }
 
 function assert_is_color(t)
 	if "number"==type(t) then
-		assert(1<=t and Data.ColorCount>=t)
+		assert(1<=t and Data.Color.WhiteInvisible>=t)
 	else
 		for _, c in pairs(t) do
-			assert(1<=c and Data.ColorCount>=c)
+			assert(1<=c and Data.Color.WhiteInvisible>=c)
 		end
 	end
+end
+
+function world_name(id)
+	return "world_"..id
 end
 
 __iw=nil
 
 function load_data(shell_data)
-	if nil==shell_data.__image_data then
+	if not shell_data.loaded_base then
 		local image_data=love.image.newImageData(
 			shell_data.__path..".png"
 		)
 		shell_data.__data=init_data(shell_data, image_data)
 		image_data=nil
+		shell_data.loaded_base=true
 	end
 	if not shell_data.loaded_dynamic then
 		Data.__iw=shell_data.__data
-		dofile(shell_data.__path..".wrl")
+		local wd_str=love.filesystem.read(shell_data.__path..".wrl")
+		loadstring(wd_str)()
 		Data.__iw=nil
 		shell_data.loaded_dynamic=true
 	end
@@ -142,6 +199,10 @@ local function rgb_match(r,g,b)
 	assert(false)
 end
 
+local function __world_default_reset_callback(_)
+	return
+end
+
 function init_data(shell_data, image_data)
 	local wd={
 		w=image_data:getWidth(),
@@ -150,18 +211,29 @@ function init_data(shell_data, image_data)
 		spawn_color=spawn_color,
 		loaded_dynamic=false,
 		triggers={},
+		--triggers_by_name={},
+		reset_callback=__world_default_reset_callback,
 		tiles={}
 	}
-	local r,g,b
+	local r,g,b, c
 	for y=1, wd.h do
 		wd.tiles[y]={}
 		for x=1, wd.w do
 			r,g,b=image_data:getPixel(x-1, y-1)
-			wd.tiles[y][x]=rgb_match(r,g,b)
+			c=rgb_match(r,g,b)
+			if Color.Black~=c then
+				wd.tiles[y][x]=c
+			end
 		end
 	end
 	return wd
 end
+
+function set_reset_callback(wd, callback)
+	wd.reset_callback=callback or __world_default_reset_callback
+end
+
+---- Tiles & data
 
 -- Check if a color can accept another color (e.g., a sentient of
 -- color b can be placed on a tile of color a)
@@ -169,16 +241,14 @@ function AC(a, b)
 	return Data.ColorAccept[a][b] or false
 end
 
----- Tiles & data
-
 -- Get tile
-function G(wd, x, y)
-	return wd.tiles[y][x]
+function G(wd, tx,ty)
+	return wd.tiles[ty][tx]
 end
 
 -- Get tile color
-function GC(wd, x, y)
-	return wd.tiles[y][x]
+function GC(wd, tx,ty)
+	return wd.tiles[ty][tx] or Data.Color.Black
 end
 
 -- Get spawn position
@@ -193,10 +263,10 @@ function G_SPY(wd)
 	return wd.spawn_y
 end
 
-function S_SP(wd, x,y, color)
+function S_SP(wd, tx,ty, color)
 	Data.assert_is_color(color)
-	wd.spawn_x=x
-	wd.spawn_y=y
+	wd.spawn_x=tx
+	wd.spawn_y=ty
 	wd.spawn_color=color
 end
 
@@ -211,7 +281,7 @@ end
 -- Set tile range (b, d)
 function SR(wd, b,d, o, axis, color)
 	Data.assert_is_color(color)
-	local x, y=o, o
+	local x,y=o, o
 	if Data.Axis.X==axis then
 		assert(wd.h>=y)
 		for x=b, d do
@@ -243,16 +313,28 @@ end
 
 ---- Triggers
 
+local function __trg_default_callback(_, _)
+	-- Util.debug("__trg_default_callback")
+	return false
+end
+
 -- Make trigger
-function M_TR(wd, tx,ty, tt, td, tcolor)
-	table.insert(wd.triggers, {
+function M_TR(wd, tx,ty, tt, name, td, tcolor, callback)
+	local td={
 		type=tt,
+		name=name,
 		tx=tx, ty=ty,
-		props=td
-	})
+		props=td,
+		callback=callback or __trg_default_callback
+	}
+	table.insert(wd.triggers, td)
+	--[[if nil~=name then
+		wd.triggers_by_name[name]=td
+	end--]]
 	if nil~=tcolor then
 		Data.ST(wd, tx,ty, tcolor)
 	end
+	return td
 end
 
 ---- Rendering
@@ -265,35 +347,37 @@ function tile_rpos(tx, ty)
 end
 
 -- Render tile to position
-function render_tile_abs(color, rx,ry, lined)
-	if Color.Black~=color then
+function render_tile_abs(color, rx,ry, line, line_color)
+	if Color.Black~=color and Color.WhiteInvisible~=color then
 		Util.set_color_table(Data.ColorTable[color])
 		Gfx.rectangle("fill", rx,ry, Data.TW,Data.TH)
-		if lined then
-			Util.set_color_table(Data.ColorTable.White, 255)
+		if line then
+			Util.set_color_table(
+				Data.ColorTable[line_color or Data.Color.White],
+				255
+			)
 			Gfx.rectangle("line", rx,ry, Data.TW,Data.TH)
 		end
 	end
 end
 
 -- Render tile to tile coords
-function render_tile(color, tx,ty, lined)
-	Data.render_tile_abs(color, (tx-1)*Data.TW, (ty-1)*Data.TH, lined)
+function render_tile(color, tx,ty, line, line_color)
+	Data.render_tile_abs(
+		color, (tx-1)*Data.TW, (ty-1)*Data.TH,
+		line, line_color
+	)
 end
 
-function render_tile_inner_abs(color, rx,ry, lined)
+function render_tile_inner_abs(color, rx,ry, line, line_color)
 	Util.set_color_table(Data.ColorTable[color])
 	Gfx.rectangle("fill",
 		Data.CIW+rx, Data.CIH+ry,
 		Data.TIW   , Data.TIH
 	)
-	if lined then
+	if line then
 		Util.set_color_table(
-			Data.ColorTable[
-			Util.ternary(
-				Data.Color.Black==color,
-				Data.Color.White, Data.Color.Black
-			)],
+			Data.ColorTable[line_color or Data.Color.Black],
 			255
 		)
 		Gfx.rectangle("line",
@@ -303,27 +387,61 @@ function render_tile_inner_abs(color, rx,ry, lined)
 	end
 end
 
-function render_tile_inner(color, tx,ty, lined)
+function render_tile_inner(color, tx,ty, line, line_color)
 	Data.render_tile_inner_abs(
 		color,
 		(tx-1)*Data.TW, (ty-1)*Data.TH,
-		lined
+		line, line_color
 	)
 end
 
-function render_tile_inner_circle_abs(color, rx,ry, lined)
+function render_tile_inner_circle_abs(color, rx,ry, line, line_color)
 	--Util.set_color_table(Data.ColorTable[color])
-	--Gfx.circle("fill", Data.CIW+rx, Data.CIH+ry, Data.TIW, 15)
-	if lined then
-		Util.set_color_table(Data.ColorTable.Black, 255)
-		Gfx.circle("line", Data.HW+rx, Data.HH+ry, Data.TIW, 15)
+	--Gfx.circle("fill", Data.HW+rx, Data.HH+ry, 6, 15)
+	if line then
+		Util.set_color_table(
+			Data.ColorTable[line_color or Data.Color.Black],
+			255
+		)
+		Gfx.circle("line", Data.HW+rx, Data.HH+ry, 6, 15)
 	end
 end
 
-function render_tile_inner_circle(color, tx,ty, lined)
+function render_tile_inner_circle(color, tx,ty, line, line_color)
 	Data.render_tile_inner_circle_abs(
 		color,
 		(tx-1)*Data.TW, (ty-1)*Data.TH,
-		lined
+		line, line_color
+	)
+end
+
+function render_tile_inner_triangle_abs(color, rx,ry, line, line_color)
+	rx=rx+Data.HW
+	ry=ry+Data.HH
+	-- FIXME: no worky with translate; Camera is a douchebag
+	--Gfx.push()
+	local __inner_triangle={
+		rx+0,ry-Data.HIH,
+		rx-Data.HIW, ry+Data.HIH,
+		rx+Data.HIW, ry+Data.HIH
+	}
+	--Gfx.translate(rx, ry)
+	--Util.set_color_table(Data.ColorTable[color])
+	--Gfx.polygon("fill", __inner_triangle)
+	if line then
+		Util.set_color_table(
+			Data.ColorTable[line_color or Data.Color.Black],
+			255
+		)
+		Gfx.polygon("line", __inner_triangle)
+	end
+	--Gfx.pop()
+end
+
+function render_tile_inner_triangle(color, tx,ty, line, line_color)
+	Data.render_tile_inner_triangle_abs(
+		color,
+		(tx-1)*Data.TW, (ty-1)*Data.TH,
+		line, line_color
 	)
 end

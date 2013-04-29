@@ -46,8 +46,19 @@ function update(dt)
 	Camera.target(data.rx+Data.HW, data.ry+Data.HH)
 end
 
-function render()
-	Data.render_tile_abs(data.color, data.rx, data.ry, true)
+function render(color_beneath)
+	local line_color=Util.ternary(
+		color_beneath==data.color,
+		Util.ternary(
+			Data.Color.Black==data.color,
+			Data.Color.White, Data.Color.Black
+		),
+		color_beneath
+	)
+	Data.render_tile_abs(
+		data.color, data.rx, data.ry,
+		true, line_color
+	)
 end
 
 function get_x()

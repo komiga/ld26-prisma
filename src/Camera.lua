@@ -2,6 +2,7 @@
 module("Camera", package.seeall)
 
 require("src/Util")
+require("src/AudioManager")
 
 local data={
 	__love_translate=Gfx.translate,
@@ -116,11 +117,15 @@ function init(x, y, x_speed, y_speed)
 end
 
 function rel_x(x)
-	return x+data.cam.x
+	return x-data.cam.x
 end
 
 function rel_y(y)
-	return y+data.cam.y
+	return y-data.cam.y
+end
+
+function rel(x, y)
+	return rel_x(x), rel_y(y)
 end
 
 function get()
@@ -144,6 +149,7 @@ function move(x, y)
 end
 
 function update(dt)
+	AudioManager.set_position(data.cam.x, data.cam.y)
 	data.cam:update(dt)
 end
 

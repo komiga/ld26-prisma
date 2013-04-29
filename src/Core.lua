@@ -7,18 +7,12 @@ require("src/Bind")
 require("src/Camera")
 require("src/AudioManager")
 require("src/FieldAnimator")
---require("src/Hooker")
---require("src/Animator")
 require("src/AssetLoader")
 require("src/Asset")
 
 require("src/Data")
 require("src/Presenter")
 require("src/Trigger")
-require("src/Trigger/Message")
-require("src/Trigger/ChangeWorld")
-require("src/Trigger/Switch")
-require("src/Trigger/Teleporter")
 require("src/Player")
 require("src/World")
 
@@ -42,13 +36,13 @@ binds={
 			end
 		end
 	},
-	["f1"]={
+	["r"]={
 		on_release=true,
 		handler=function(_, _, _, _)
-			World.reset()
+			World.current():reset(false)
 		end
 	},
-	["f2"]={
+	--[[["f2"]={
 		on_release=true,
 		handler=function(_, _, _, _)
 			State.trg_debug=not State.trg_debug
@@ -70,14 +64,14 @@ binds={
 	["f4"]={
 		on_release=true,
 		handler=function(_, _, _, _)
-			State.debug=not State.debug
-			if State.debug then
+			State.gen_debug=not State.gen_debug
+			if State.gen_debug then
 				print("debug mode enabled")
 			else
 				print("debug mode disabled")
 			end
 		end
-	},
+	},--]]
 	[" "]={
 		on_release=true,
 		handler=function(_, _, _, _)
@@ -87,7 +81,9 @@ binds={
 	},
 	-- FIXME: disallow both wasd+arrows in a single update;
 	-- remove arrow keys or wasd?
-	[{"up",'w', "down",'s', "left",'a', "right",'d'}]={
+	--[{'w', 's', 'a', 'd'}]={
+	--[{"up",'w', "down",'s', "left",'a', "right",'d'}]={
+	[{"up", "down", "left", "right"}]={
 		ttable={
 			["up"]   =Player.Dir.Up   , ['w']=Player.Dir.Up,
 			["down"] =Player.Dir.Down , ['s']=Player.Dir.Down,
@@ -98,7 +94,7 @@ binds={
 			[Player.Dir.Up]=0.0  , [Player.Dir.Down]=0.0,
 			[Player.Dir.Left]=0.0, [Player.Dir.Right]=0.0
 		},
-		duration=0.125,
+		duration=0.128,
 		on_press=true,
 		on_active=true,
 		handler=function(ident, dt, kind, bind)
@@ -115,7 +111,7 @@ binds={
 				-- Mc hacksters
 				bind.time[dir]=-bind.duration
 			end
-			World.move_player(dir)
+			World.current():move_player(dir)
 		end
 	}
 }
@@ -149,9 +145,9 @@ end
 function init(arg)
 	-- Ensure debug is enabled for initialization
 	local debug_mode_temp=false
-	if not State.debug then
-		State.debug=true
+	if not State.gen_debug then
 		debug_mode_temp=true
+		State.gen_debug=true
 	end
 
 	Core.display_width=Gfx.getWidth()
@@ -176,21 +172,24 @@ function init(arg)
 	Presenter.init(Asset.font.presenter)
 
 	Player.init(1, 1, Data.Color.Red)
-	local world_name=Util.optional(arg[2], "start")
-	World.init(Asset.world, Asset.world[world_name])
+	local world_id="0"
+	world_id=Util.ternary(
+		not debug_mode_temp,
+		Util.optional(arg[2], world_id), world_id
+	)
+	World.init(Asset.world, Asset.world[world_id])
 
 	-- default rendering state
-	Gfx.setFont(Asset.font.main)
+	--Gfx.setFont(Asset.font.main)
 	Gfx.setColor(255,255,255, 255)
 	Gfx.setBackgroundColor(0,0,0, 255)
 
-	Gfx.setPointSize(4.0)
 	Gfx.setLineWidth(2.0)
 	--Gfx.setLineStyle("smooth")
 
 	-- Ensure debug is disabled after initialization
 	if debug_mode_temp then
-		State.debug=false
+		State.gen_debug=false
 	end
 end
 

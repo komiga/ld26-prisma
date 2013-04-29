@@ -6,6 +6,8 @@ gfx_debug=false
 sfx_debug=false
 trg_debug=false
 
+hardcore_mode=false
+
 paused=false
 pause_lock=false
 

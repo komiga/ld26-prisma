@@ -2,14 +2,14 @@
 function love.conf(t)
 	t.version="0.8.0"
 
-	t.title="LD26-plash-unnamed"
+	t.title="Prisma"
 	t.author="plash"
 	t.url="http://komiga.com"
 	t.identity=t.title.."-save"
-	t.release=false
+	t.release=true
 
-	t.screen.width=1440
-	t.screen.height=900
+	t.screen.width=1024
+	t.screen.height=768
 	t.screen.fullscreen=false
 	t.screen.vsync=true
 	t.screen.fsaa=0
@@ -21,7 +21,7 @@ function love.conf(t)
 
 	t.modules.joystick=false
 	t.modules.keyboard=true
-	t.modules.mouse=true
+	t.modules.mouse=false
 
 	t.modules.audio=true
 	t.modules.sound=true

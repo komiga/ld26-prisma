@@ -1,0 +1,45 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=16,16
+local SP_C=C.Green
+
+local ED_X, ED_Y=32,16
+local ED_C=C.Green
+local ED_N="2"
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_start",
+	{
+		"Around here, color will get you about.",
+		starter=true
+	}
+)
+
+-- Secret #1
+D.M_TR(
+	W, 1,16,
+	TT.Message,
+	nil,
+	{
+		"Ain't you clever. But now you're stuck here!"
+	}
+)
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	"cw_end",
+	{ED_N},
+	ED_C
+)

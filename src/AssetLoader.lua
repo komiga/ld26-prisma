@@ -11,10 +11,11 @@ local Kind={}
 
 local function get_asset_path(root_path, path, name, ext)
 	Util.tcheck(path, "string", true)
+	local p_ext=(nil~=ext) and ('.'..ext) or ""
 	if nil==path then
-		return root_path..name..(nil~=ext and '.'..ext or "")
+		return root_path..name..p_ext
 	else
-		return root_path..string.gsub(path, '@', name)
+		return root_path..string.gsub(path, '@', name)..p_ext
 	end
 end
 
@@ -317,6 +318,7 @@ Kind.world={
 	loader=function(root_path, name, desc)
 		local shell_data={
 			__data=nil,
+			__w_id=name,
 			__path=get_asset_path(
 				root_path, desc.path, name, nil
 			)

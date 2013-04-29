@@ -57,7 +57,7 @@ function debug_sub(sub, msg, ...)
 end
 
 function debug(msg, ...)
-	if true==State.debug then
+	if true==State.gen_debug then
 		print("debug: "..msg, ...)
 	end
 end

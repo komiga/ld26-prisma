@@ -1,0 +1,35 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=2,2
+local SP_C=C.White
+
+local ED_X, ED_Y=2,19
+local ED_C=C.White
+local ED_N="1"
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_start",
+	{
+		"There is only one exit.",
+		starter=true
+	}
+)
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	"cw_end",
+	{ED_N},
+	ED_C
+)

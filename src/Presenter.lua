@@ -44,7 +44,7 @@ function init(font)
 		{["alpha"]=data.trans_in},
 		FieldAnimator.Mode.Continue
 	)
-	data.message="blblbl"
+	data.message=""
 	data.hw, data.hh=0.0, 0.0
 
 	data.__initialized=true

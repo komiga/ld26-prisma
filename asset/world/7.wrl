@@ -1,0 +1,57 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=2,2
+local SP_C=C.Red
+
+local ED_X, ED_Y=31,63
+local ED_C=C.Red
+local ED_N="8"
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_start",
+	{
+		"There is truly only one exit.",
+		starter=true
+	}
+)
+
+-- Faux end
+D.M_TR(
+	W, 2,19,
+	TT.ChangeWorld,
+	nil,
+	{"0"},
+	ED_C
+)
+
+D.M_TR(
+	W, 2,55,
+	TT.ChangeWorld,
+	"cw_1_secret",
+	{"1"},
+	ED_C,
+	function(w, trg)
+		-- Super hackety hack!
+		-- FIXME: Why is this assertion failing with ", false"?
+		w:color_player(C.Aqua, true)
+	end
+)
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	"cw_end",
+	{ED_N},
+	ED_C
+)

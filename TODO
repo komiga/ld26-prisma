@@ -4,32 +4,20 @@ TODO
 	Sink circuits take one channel each, combine at
 	end of sequence?
 
--	bind space to place tris or activate triggers.
-
 Asset:
 -	sound.player_no_drop_channel:
 	error effect when player tries to drop last color
 	channel into sink
 
 World:
--	Considerations for player position if world
-	jumping is used. (well, just do it anyways)
-	???
-
 -	Quick decay on world change?
 	All tiles decrease in size to center?
 	Just player?
 
--	/Message: don't show text if starter on entered()
-	when resetting
+Presenter:
+-	Split message to fit window.
 
 Trigger:
--	make all triggers optionally kill player;
-	reset World state and respawn
-
--	Timer: changes color of tile on a timer.
-	(this is cool. can be tied with, say, a Switch.)
-
 -	Recolor: change entire zones/colors to
 	another color. includes color inversion and
 	color-accept inversion.

@@ -16,12 +16,19 @@ local TriggerState=Trigger.GenericState
 local ChangeWorld={}
 ChangeWorld.__index=ChangeWorld
 
-function ChangeWorld:__init(trd)
+function ChangeWorld:__init(world, trd)
 	Util.tcheck(trd.props, "table")
 	Util.tcheck(trd.props[1], "string")
 
 	self.data=trd
-	assert(nil~=Asset.world[self.data.props[1]])
+	self.props=self.data.props
+	self.props.world_id=self.props[1]
+	self.props.world_name=Data.world_name(self.props.world_id)
+
+	Util.debug_sub(State.trg_debug,
+		"ChangeWorld:__init: name: ", self.props.world_name
+	)
+	assert(nil~=Asset.world[self.props.world_id])
 
 	self:reset()
 end
@@ -30,40 +37,49 @@ function ChangeWorld:reset()
 	self.state=TriggerState.Active
 end
 
-function ChangeWorld:activate()
-	AudioManager.spawn(Asset.sound.trigger_change_world_activate)
-	World.set_world(Asset.world[self.data.props[1]])
-	Bind.clear_active()
-	State.change_world_lock=true
-	return self:is_active()
-end
-
-function ChangeWorld:entered()
-	if TriggerState.Active==self.state then
-		Util.debug_sub(State.trg_debug,
-			"Trigger.ChangeWorld:update: activated "..self.data.props[1]
-		)
-		self:activate()
-	end
-	return self:is_active()
-end
-
-function ChangeWorld:update(dt, px,py)
-	return self:is_active()
-end
-
-function ChangeWorld:render(px,py)
-	Data.render_tile_inner_circle(
-		Data.Color.Black,
-		self.data.tx, self.data.ty,
-		true
+function ChangeWorld:set_active(enable)
+	self.state=Util.ternary(
+		enable,
+		TriggerState.Active,
+		TriggerState.Inactive
 	)
 end
 
 function ChangeWorld:is_active()
-	return TriggerState.Active==self.state
+	return TriggerState.Inactive~=self.state
 end
 
-function new_change_world(trd)
-	return Util.new_object(ChangeWorld, trd)
+function ChangeWorld:activate(world)
+	Util.debug_sub(State.trg_debug,
+		"Trigger.ChangeWorld:activate: "..self.props.world_name
+	)
+	World.set_world(Asset.world[self.props.world_id])
+	Bind.clear_active()
+	State.change_world_lock=true
+	Trigger.__trg_callback(world, self)
+	return self:is_active()
+end
+
+function ChangeWorld:entered(world)
+	if self:is_active() then
+		self:activate(world)
+	end
+	return self:is_active()
+end
+
+function ChangeWorld:update(_, dt, px,py)
+	return self:is_active()
+end
+
+function ChangeWorld:render(_, px,py)
+	Data.render_tile_inner_triangle(
+		Data.Color.Black,
+		self.data.tx, self.data.ty,
+		true,
+		Data.Color.Black
+	)
+end
+
+function new_change_world(world, trd)
+	return Util.new_object(ChangeWorld, world, trd)
 end

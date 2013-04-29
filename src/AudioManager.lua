@@ -7,7 +7,9 @@ InstancePolicy={
 	-- Never kill, never grow
 	Constant=2,
 	-- Can grow past limit, does not go below limit
-	Reserve=3
+	Reserve=3,
+	-- Never kill, never grow; trample active sounds
+	Trample=4
 }
 
 -- class SoundInstance
@@ -28,8 +30,16 @@ function SoundInstance:set_position(x, y, z)
 	self.source:setPosition(x, y, z)
 end
 
+function SoundInstance:stop()
+	self.source:stop()
+end
+
 function SoundInstance:play()
 	self.source:play()
+end
+
+function SoundInstance:restart()
+	self.source:rewind()
 end
 
 function SoundInstance:is_playing()
@@ -68,15 +78,26 @@ function Bucket:__init(sound_data)
 	end
 end
 
+function Bucket:can_grow()
+	return
+		InstancePolicy.Constant~=self.data.policy and
+		InstancePolicy.Trample~=self.data.policy
+end
+
 function Bucket:spawn(x, y, z)
 	local inst
 	if 0<#self.free then
 		inst=Util.last(self.free)
 		table.remove(self.free)
 	else
-		if InstancePolicy.Constant~=self.data.policy then
+		if self:can_grow() then
 			inst=SoundInstance.new(self.data, x, y, z)
 			self.count=self.count+1
+		elseif
+			InstancePolicy.Trample==self.policy
+			and 0<#self.active
+		then
+			self.active[1]:rewind()
 		end
 	end
 	if nil~=inst then
@@ -99,6 +120,7 @@ function Bucket:update(dt)
 				table.remove(self.active, i)
 				if
 					InstancePolicy.Constant==policy
+					or InstancePolicy.Trample==policy
 					or (InstancePolicy.Reserve==policy
 						and self.count<=self.data.limit)
 				then
@@ -136,6 +158,7 @@ end
 
 function set_position(x, y, z)
 	Sfx.setPosition(x, y, Util.optional(z, 0.0))
+	--Util.debug("AudioManager.set_position: ", x, y, z)
 end
 
 function spawn(sound_data, x, y, z)

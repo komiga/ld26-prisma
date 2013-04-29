@@ -1,0 +1,130 @@
+
+local D=Data
+local C=D.Color
+local TT=D.TriggerType
+
+local W=D.__iw
+
+local SP_X, SP_Y=16,60
+local SP_C=C.Yellow
+
+local ED_X, ED_Y=16,127
+local ED_C=C.Yellow
+local ED_N="7"
+
+D.set_reset_callback(W, function(w)
+	w.S={
+		V={
+			["msg_1"]=false,
+			["msg_2"]=true,
+			["msg_3"]=true,
+			["msg_4"]=true
+		},
+		H=false
+	}
+	w.triggers_by_name["msg_start"]:set_active(true)
+	w.triggers_by_name["msg_hidden"]:set_active(false)
+end)
+
+D.S_SP(W, SP_X,SP_Y, SP_C)
+
+local function W_update(w, trg, _)
+	w.S.V[trg.data.name]=true
+	if not w.S.H and
+		true==w.S.V["msg_1"] and
+		true==w.S.V["msg_2"] and
+		true==w.S.V["msg_3"] and
+		true==w.S.V["msg_4"]
+	then
+		w.triggers_by_name["msg_start"]:set_active(false)
+		w.triggers_by_name["msg_hidden"]:set_active(true)
+		w.S.H=true
+		w:color_tile_zone(SP_X,SP_Y+1, ED_X,ED_Y-1, C.White, false)
+	end
+end
+
+-- Start trigger
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_start",
+	{
+		"Life doesn't make sense sometimes.",
+		starter=true
+	},
+	nil
+)
+
+D.M_TR(
+	W, SP_X,SP_Y,
+	TT.Message,
+	"msg_hidden",
+	{
+		"Eventually, though, the way forward becomes clear."
+	},
+	nil
+)
+
+D.M_TR(
+	W, 16,93,
+	TT.Message,
+	"msg_halfway",
+	{
+		"Unfortunately, it is often arduous."
+	},
+	nil
+)
+
+D.M_TR(
+	W, 16,28,
+	TT.Message,
+	"msg_1",
+	{
+		"There are always multiple paths."
+	},
+	nil,
+	W_update
+)
+
+D.M_TR(
+	W, 16,6,
+	TT.Message,
+	"msg_2",
+	{
+		"The \"obvious\" one. Typical rookie mistake."
+	},
+	nil,
+	W_update
+)
+
+D.M_TR(
+	W, 5,17,
+	TT.Message,
+	"msg_3",
+	{
+		"Most of them aren't worthwhile."
+	},
+	nil,
+	W_update
+)
+
+D.M_TR(
+	W, 27,17,
+	TT.Message,
+	"msg_4",
+	{
+		"The path rightwards is never the right one."
+		-- LELELE
+	},
+	nil,
+	W_update
+)
+
+-- End trigger
+D.M_TR(
+	W, ED_X,ED_Y,
+	TT.ChangeWorld,
+	"cw_end",
+	{ED_N},
+	ED_C
+)

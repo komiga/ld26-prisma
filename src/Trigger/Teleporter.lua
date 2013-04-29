@@ -17,12 +17,16 @@ local TriggerState=Trigger.GenericState
 local Teleporter={}
 Teleporter.__index=Teleporter
 
-function Teleporter:__init(trd)
+function Teleporter:__init(world, trd)
 	Util.tcheck(trd.props, "table")
 	Util.tcheck(trd.props[1], "number")
 	Util.tcheck(trd.props[2], "number")
 
 	self.data=trd
+	self.props=self.data.props
+	self.props.x=self.props[1]
+	self.props.y=self.props[2]
+
 	self:reset()
 end
 
@@ -44,26 +48,28 @@ function Teleporter:is_active()
 	return true
 end
 
-function Teleporter:activate()
-	Util.debug_sub(State.trg_debug, "Trigger.Teleporter:activate")
-	AudioManager.spawn(Asset.sound.trigger_teleporter_activate)
-	World.current():position_player(
-		self.data.props[1], self.data.props[2],
-		true
-	)
+function Teleporter:activate(world)
+	if Trigger.__trg_callback(world, self) then
+		Util.debug_sub(State.trg_debug, "Trigger.Teleporter:activate")
+		AudioManager.spawn(Asset.sound.trigger_teleporter_activate)
+		World.current():position_player(
+			self.props.x, self.props.y,
+			true
+		)
+	end
 	return self:is_active()
 end
 
-function Teleporter:entered()
-	self:activate()
+function Teleporter:entered(world)
+	self:activate(world)
 	return self:is_active()
 end
 
-function Teleporter:update(dt, px,py)
+function Teleporter:update(_, dt, px,py)
 	return self:is_active()
 end
 
-function Teleporter:render(px, py)
+function Teleporter:render(_, px, py)
 	local rx,ry=Data.tile_rpos(self.data.tx, self.data.ty)
 	ry=ry+Data.HH
 	Util.set_color_table(Data.ColorTable.Black)
@@ -72,6 +78,6 @@ function Teleporter:render(px, py)
 	)
 end
 
-function new_teleporter(trd)
-	return Util.new_object(Teleporter, trd)
+function new_teleporter(world, trd)
+	return Util.new_object(Teleporter, world, trd)
 end

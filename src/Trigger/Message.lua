@@ -9,73 +9,83 @@ require("src/Data")
 require("src/Presenter")
 --require("src/World")
 
-local TriggerState={
-	Viewed=1,
-	Unviewed=2
-}
+local TriggerState=Trigger.GenericState
 
 -- class Message
 
 local Message={}
 Message.__index=Message
 
-function Message:__init(trd)
+function Message:__init(world, trd)
 	Util.tcheck(trd.props, "table")
 	Util.tcheck(trd.props[1], "string")
+	Util.tcheck(trd.props.starter, "boolean", true)
 
 	self.data=trd
-	self.state=TriggerState.Unviewed
+	self.props=self.data.props
+	self.props.message=self.props[1]
+
+	self.viewed=not self.props.starter
 	self:reset()
 end
 
 function Message:reset()
-	--self.state=TriggerState.Unviewed
+	--self.viewed=false
+end
+
+function Message:set_active(enable)
+	self.state=Util.ternary(
+		enable,
+		TriggerState.Active,
+		TriggerState.Inactive
+	)
 end
 
 function Message:is_active()
-	return true
+	return TriggerState.Inactive~=self.state
 end
 
-function Message:start_presenter(from_enter)
-	Util.debug_sub(State.trg_debug,
-		"Trigger.Message:start_presenter: "..self.data.props[1]
+function Message:activate(world)
+	if self:is_active() then
+		Util.debug_sub(State.trg_debug,
+		"Trigger.Message:activate: "..self.props.message
 	)
-	Presenter.start(self.data.props[1], not from_enter)
-end
-
-function Message:activate()
-	Util.debug_sub(State.trg_debug,
-		"Trigger.Message:activate: "..self.data.props[1]
-	)
-	self:start_presenter(false)
-	return self:is_active()
-end
-
-function Message:entered()
-	Util.debug_sub(State.trg_debug,
-		"Trigger.Message:entered: "..self.data.props[1]
-	)
-	if TriggerState.Unviewed==self.state then
-		if self.data.props.starter then
-			self:start_presenter(true)
-			self.state=TriggerState.Viewed
+		if Trigger.__trg_callback(world, self, true) then
+			Bind.clear_active()
+			Presenter.start(self.props.message, true)
 		end
 	end
 	return self:is_active()
 end
 
-function Message:update(dt, px,py)
+function Message:entered(world)
+	if self:is_active() and not self.viewed then
+		Util.debug_sub(State.trg_debug,
+			"Trigger.Message:entered: "..self.props.message
+		)
+		if Trigger.__trg_callback(world, self, false) then
+			Presenter.start(self.props.message, false)
+			self.viewed=true
+		end
+	end
 	return self:is_active()
 end
 
-function Message:render(px, py)
-	Data.render_tile_inner(
-		Data.Color.System,
-		self.data.tx, self.data.ty,
-		true
-	)
+function Message:update(_, dt, px,py)
+	return self:is_active()
 end
 
-function new_message(trd)
-	return Util.new_object(Message, trd)
+function Message:render(_, px, py)
+	-- TODO: completely black?
+	if self:is_active() then
+		Data.render_tile_inner(
+			Data.Color.System,
+			self.data.tx, self.data.ty,
+			true
+		)
+	end
+end
+
+function new_message(world, trd)
+	return Util.new_object(Message, world, trd)
 end
