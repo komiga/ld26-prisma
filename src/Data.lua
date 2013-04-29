@@ -178,8 +178,14 @@ function load_data(shell_data)
 	end
 	if not shell_data.loaded_dynamic then
 		Data.__iw=shell_data.__data
-		local wd_str=love.filesystem.read(shell_data.__path..".wrl")
-		loadstring(wd_str)()
+		local wd_path=shell_data.__path..".wrl"
+		local wd_str=love.filesystem.read(wd_path)
+		local wd_chunk, err=loadstring(wd_str)
+		if nil~=wd_chunk then
+			wd_chunk()
+		else
+			print("error while loading world: "..wd_path)
+		end
 		Data.__iw=nil
 		shell_data.loaded_dynamic=true
 	end
