@@ -16,7 +16,8 @@ require("src/Trigger")
 require("src/Player")
 require("src/World")
 
-binds={
+Binds={
+-- System
 	["escape"]={
 		on_release=true,
 		handler=function(_, _, _, _)
@@ -36,42 +37,14 @@ binds={
 			end
 		end
 	},
+
+-- Player
 	["r"]={
 		on_release=true,
 		handler=function(_, _, _, _)
 			World.current():reset(false)
 		end
 	},
-	--[[["f2"]={
-		on_release=true,
-		handler=function(_, _, _, _)
-			State.trg_debug=not State.trg_debug
-			if State.trg_debug then
-				print("trigger debug mode enabled")
-			else
-				print("trigger debug mode disabled")
-			end
-		end
-	},
-	["f3"]={
-		on_release=true,
-		handler=function(_, _, _, _)
-			State.gfx_debug=not State.gfx_debug
-			State.sfx_debug=not State.sfx_debug
-			print("graphics and audio debug modes toggled")
-		end
-	},
-	["f4"]={
-		on_release=true,
-		handler=function(_, _, _, _)
-			State.gen_debug=not State.gen_debug
-			if State.gen_debug then
-				print("debug mode enabled")
-			else
-				print("debug mode disabled")
-			end
-		end
-	},--]]
 	[" "]={
 		on_release=true,
 		handler=function(_, _, _, _)
@@ -79,41 +52,40 @@ binds={
 			Player.queue_activation()
 		end
 	},
-	-- FIXME: disallow both wasd+arrows in a single update;
-	-- remove arrow keys or wasd?
-	--[{'w', 's', 'a', 'd'}]={
-	--[{"up",'w', "down",'s', "left",'a', "right",'d'}]={
-	[{"up", "down", "left", "right"}]={
-		ttable={
-			["up"]   =Player.Dir.Up   , ['w']=Player.Dir.Up,
-			["down"] =Player.Dir.Down , ['s']=Player.Dir.Down,
-			["left"] =Player.Dir.Left , ['a']=Player.Dir.Left,
-			["right"]=Player.Dir.Right, ['d']=Player.Dir.Right
-		},
-		time={
-			[Player.Dir.Up]=0.0  , [Player.Dir.Down]=0.0,
-			[Player.Dir.Left]=0.0, [Player.Dir.Right]=0.0
-		},
-		duration=0.128,
-		on_press=true,
-		on_active=true,
-		handler=function(ident, dt, kind, bind)
-			local dir=bind.ttable[ident]
-			-- FIXME: Hacky hackerton
-			if Bind.Kind.Active==kind then
-				bind.time[dir]=bind.time[dir]+dt
-				if bind.duration<=bind.time[dir] then
-					bind.time[dir]=bind.time[dir]-bind.duration
-				else
-					return
-				end
-			elseif Bind.Kind.Press==kind then
-				-- Mc hacksters
-				bind.time[dir]=-bind.duration
+}
+
+-- FIXME (for wasd+arrow bind): disallow both wasd+arrows in a single
+-- update? how to dooooooooo
+player_move_bind={
+	ttable={
+		["up"]   =Player.Dir.Up   , ['w']=Player.Dir.Up,
+		["down"] =Player.Dir.Down , ['s']=Player.Dir.Down,
+		["left"] =Player.Dir.Left , ['a']=Player.Dir.Left,
+		["right"]=Player.Dir.Right, ['d']=Player.Dir.Right
+	},
+	time={
+		[Player.Dir.Up]=0.0  , [Player.Dir.Down]=0.0,
+		[Player.Dir.Left]=0.0, [Player.Dir.Right]=0.0
+	},
+	duration=0.128,
+	on_press=true,
+	on_active=true,
+	handler=function(ident, dt, kind, bind)
+		local dir=bind.ttable[ident]
+		-- FIXME: Hacky hackerton
+		if Bind.Kind.Active==kind then
+			bind.time[dir]=bind.time[dir]+dt
+			if bind.duration<=bind.time[dir] then
+				bind.time[dir]=bind.time[dir]-bind.duration
+			else
+				return
 			end
-			World.current():move_player(dir)
+		elseif Bind.Kind.Press==kind then
+			-- Mc hacksters
+			bind.time[dir]=-bind.duration
 		end
-	}
+		World.current():move_player(dir)
+	end
 }
 
 function bind_trigger_gate(_, ident, _, kind)
@@ -155,9 +127,59 @@ function init(arg)
 	Core.display_height=Gfx.getHeight()
 	Core.display_height_half=0.5*Core.display_height
 
+	Core.Binds[{'w', 's', 'a', 'd'}]=Core.player_move_bind
+
+	if not debug_mode_temp then
+		Core.Binds[{"up", "down", "left", "right"}]=Core.player_move_bind
+		Core.Binds["f1"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				State.gen_debug=not State.gen_debug
+				if State.gen_debug then
+					print("debug mode enabled")
+				else
+					print("debug mode disabled")
+				end
+			end
+		}
+		Core.Binds["f2"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				State.trg_debug=not State.trg_debug
+				if State.trg_debug then
+					print("trigger debug mode enabled")
+				else
+					print("trigger debug mode disabled")
+				end
+			end
+		}
+		Core.Binds["f3"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				State.gfx_debug=not State.gfx_debug
+				if State.gfx_debug then
+					print("graphics debug mode enabled")
+				else
+					print("graphics debug mode disabled")
+				end
+			end
+		}
+		Core.Binds["f4"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				State.sfx_debug=not State.sfx_debug
+				if State.sfx_debug then
+					print("sound debug mode enabled")
+				else
+					print("sound debug mode disabled")
+				end
+			end
+		}
+	end
+
 	-- system initialization
 	Util.init()
-	Bind.init(Core.binds, Core.bind_trigger_gate)
+	Bind.init(Core.Binds, Core.bind_trigger_gate)
 
 	-- assets
 	AssetLoader.load("asset/", Asset.desc_root, Asset)
