@@ -214,7 +214,7 @@ function Unit:position_player(nx,ny, camera_immediate)
 			end
 		end
 		return true
-	elseif not inb or State.hardcore_mode then
+	elseif not inb and State.hardcore_mode then
 		self:reset(true)
 	end
 	return false
@@ -229,6 +229,10 @@ function Unit:move_player(dir)
 		=Player.get_y()+
 		((Player.Dir.Up==dir)   and -1 or
 		((Player.Dir.Down==dir) and  1 or 0))
+
+	if not State.hardcore_mode and not self:in_bounds(nx,ny) then
+		return false
+	end
 	if self:position_player(nx,ny, false) then
 		AudioManager.spawn(Asset.sound.player_move)
 		return true
