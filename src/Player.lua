@@ -19,7 +19,8 @@ local data={
 	__initialized=false,
 	x=nil,y=nil,
 	rx=nil,ry=nil,
-	tris=nil,
+	color=nil,
+
 	activation_queued=nil
 }
 
@@ -33,8 +34,7 @@ function init(x, y, color)
 end
 
 function reset(color, hx, hy)
-	data.color=color
-	data.tris={}
+	Player.set_color(color)
 	data.activation_queued=false
 	if hx and hy then
 		data.rx, data.ry=Data.tile_rpos(hx, hy)
@@ -47,14 +47,7 @@ function update(dt)
 end
 
 function render(color_beneath)
-	local line_color=Util.ternary(
-		color_beneath==data.color,
-		Util.ternary(
-			Data.Color.Black==data.color,
-			Data.Color.White, Data.Color.Black
-		),
-		color_beneath
-	)
+	local line_color=Data.LineColorMatrix[data.color][color_beneath]
 	Data.render_tile_abs(
 		data.color, data.rx, data.ry,
 		true, line_color

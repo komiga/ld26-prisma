@@ -151,6 +151,24 @@ ColorAddResult={
 	[Color.WhiteInvisible]={}
 }
 
+-- Maps to line color based on color of tile beneath and player color
+-- player_color -> beneath_color => line_color
+LineColorMatrix={
+	{10,2, 3,4,5, 6,7,8, 9,10}, -- Black
+	{ 1,1, 3,4,5, 6,7,8, 9,10}, -- White
+
+	{1,2, 1,4,5, 6,7,8, 9,10}, -- RGB
+	{1,2, 3,1,5, 6,7,8, 9,10},
+	{1,2, 3,4,1, 6,7,8, 9,10},
+
+	{1,2, 3,4,5, 1,7,8, 9,10}, -- AMY
+	{1,2, 3,4,5, 6,1,8, 9,10},
+	{1,2, 3,4,5, 6,7,1, 9,10},
+
+	{1,2, 3,4,5, 6,7,8, 1,10}, -- System
+	{1,1, 3,4,5, 6,7,8, 9,10}  -- WhiteInvisible
+}
+
 function assert_is_color(t)
 	if "number"==type(t) then
 		assert(1<=t and Data.Color.WhiteInvisible>=t)
@@ -355,15 +373,15 @@ end
 -- Render tile to position
 function render_tile_abs(color, rx,ry, line, line_color)
 	if Color.Black~=color and Color.WhiteInvisible~=color then
-		Util.set_color_table(Data.ColorTable[color])
+		Util.set_color_table(Data.ColorTable[color], 255)
 		Gfx.rectangle("fill", rx,ry, Data.TW,Data.TH)
-		if line then
-			Util.set_color_table(
-				Data.ColorTable[line_color or Data.Color.White],
-				255
-			)
-			Gfx.rectangle("line", rx,ry, Data.TW,Data.TH)
-		end
+	end
+	if line then
+		Util.set_color_table(
+			Data.ColorTable[line_color or Data.Color.White],
+			255
+		)
+		Gfx.rectangle("line", rx,ry, Data.TW,Data.TH)
 	end
 end
 
