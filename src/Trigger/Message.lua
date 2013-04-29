@@ -23,7 +23,6 @@ function Message:__init(world, trd)
 
 	self.data=trd
 	self.props=self.data.props
-	self.props.message=self.props[1]
 
 	self.viewed=not self.props.starter
 	self:reset()
@@ -31,6 +30,7 @@ end
 
 function Message:reset()
 	--self.viewed=false
+	self.props.message=self.props[1]
 end
 
 function Message:set_active(enable)
