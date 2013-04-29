@@ -5,31 +5,70 @@ local TT=D.TriggerType
 
 local W=D.__iw
 
-local SP_X, SP_Y=16,16
+local SP_X, SP_Y=2,2
 local SP_C=C.WhiteInvisible
 
-local ED_X, ED_Y=1,1
-local ED_C=C.WhiteInvisible
-local ED_N="999"
+local ED_X, ED_Y=62,3
+local ED_C=C.Red
+local ED_N="9001"
 
 D.S_SP(W, SP_X,SP_Y, SP_C)
 
+D.set_reset_callback(W,function(w)
+	w.S={
+		pm_1_triggered=false
+	}
+end)
+
 -- Start trigger
 D.M_TR(
-	W, SP_X,SP_Y,
-	TT.Message,
-	"msg_start",
-	{
-		"You won. Congratulations.",
-		starter=true
-	}
+	W, SP_X,SP_Y, TT.Message, "msg_start",{
+	"You won. Congratulations.",
+	starter=true
+})
+
+-- Left
+D.M_TR(
+	W, 5,28, TT.Message, nil,{
+	"Sure is dark in here..."
+})
+
+local PG_M_1="Do you know what petrichor & geosmin are?"
+local PG_M_2="They are chemicals that cause the smell of rain!"
+local function PG_M_update(w, trg, _)
+	if not w.S.pm_1_triggered then
+		w.triggers_by_name[trg.data.props.other].props.message=PG_M_2
+		w.S.pm_1_triggered=true
+	end
+	return false
+end
+
+-- Bottom-left corner
+D.M_TR(
+	W, 6,60, TT.Message, "msg_pg_bl",
+	{PG_M_1, other="msg_pg_br"}, nil, PG_M_update
+)
+
+-- Bottom-right corner
+D.M_TR(
+	W, 56,61, TT.Message, "msg_pg_br",
+	{PG_M_1, other="msg_pg_bl"}, nil, PG_M_update
+)
+
+-- Right
+D.M_TR(
+	W, 62,31, TT.Message, nil,
+	{"My color senses are tingling..."},nil,
+	function(w, trg, _)
+		w:color_player(ED_C, false)
+	end
 )
 
 -- End trigger
---[[D.M_TR(
+D.M_TR(
 	W, ED_X,ED_Y,
 	TT.ChangeWorld,
 	"cw_end",
 	{ED_N},
 	ED_C
-)--]]
+)

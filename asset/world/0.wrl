@@ -1,4 +1,6 @@
 
+-- 0-based because screw you, Lua!
+
 local D=Data
 local C=D.Color
 local TT=D.TriggerType

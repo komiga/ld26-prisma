@@ -6,10 +6,10 @@ local TT=D.TriggerType
 local W=D.__iw
 
 local SP_X, SP_Y=16,60
-local SP_C=C.Yellow
+local SP_C=C.White
 
 local ED_X, ED_Y=16,127
-local ED_C=C.Yellow
+local ED_C=C.White
 local ED_N="7"
 
 D.set_reset_callback(W, function(w)

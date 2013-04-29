@@ -20,7 +20,7 @@ D.M_TR(
 	TT.Message,
 	"msg_start",
 	{
-		"Have some switches.",
+		"Color can change when you need it to.",
 		starter=true
 	}
 )

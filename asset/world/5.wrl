@@ -5,18 +5,12 @@ local TT=D.TriggerType
 
 local W=D.__iw
 
-local SP_X, SP_Y=16,28
-local SP_C=C.Blue
+local SP_X, SP_Y=16,16
+local SP_C=C.Red
 
-local ED_X, ED_Y=16,10
-local ED_C=C.Red
-local ED_N="6"
-
-D.set_reset_callback(W, function(w)
-	w.S={
-		I=1
-	}
-end)
+local ED_X, ED_Y=16,31
+local ED_C=C.Green
+local ED_N="5"
 
 D.S_SP(W, SP_X,SP_Y, SP_C)
 
@@ -26,71 +20,35 @@ D.M_TR(
 	TT.Message,
 	"msg_start",
 	{
-		"It doesn't have to make sense.",
+		-- Fun fact: I knew a DJ by this name.
+		-- He is gone from this universe, sadly.
+		"Kiddquikk.",
 		starter=true
 	}
 )
 
-local SW_N={"sw_1", "sw_2", "sw_3"}
-local SW_I={["sw_1"]=1, ["sw_2"]=2, ["sw_3"]=3}
-local SW_X={ 5,16,28}
-local SW_Y={30,31,30}
-local SW_CI={C.Green, ED_C, C.Aqua}
-local SW_C ={C.Aqua, C.Green, SP_C}
+-- Upper channel
+D.M_TR(
+	W, 16,2,
+	TT.Timer,
+	"tm_upper_channel",
+	{
+		1.58, 0, {ED_C, C.Red},
+		{{16,2, 16,12}}
+	}
+)
 
--- L-R Aqua ED	| Aqua Green
--- M-R ED SP	| SP   Green
-
-local M1={}--3,3}
-local M2={}--1,2}
-
-local function W_update(w, trg)
-	if 0<#M1 then
-		local sw_1=w.triggers_by_name[SW_N[M1[w.S.I]]]
-		local sw_2=w.triggers_by_name[SW_N[M2[w.S.I]]]
-
-		local sw_1_tc=w:tile(sw_1.data.tx,sw_1.data.ty, sw_1)
-		local sw_2_tc=w:tile(sw_2.data.tx,sw_2.data.ty, sw_2)
-		w:color_tile(sw_1.data.tx,sw_1.data.ty, sw_2_tc)
-		w:color_tile(sw_2.data.tx,sw_2.data.ty, sw_1_tc)
-
-		--local sw_1_c=sw_1.color
-		--local sw_2_c=sw_2.color
-		--sw_1.color=sw_2_color
-		--sw_2.color=sw_1_color
-
-		w.S.I=(#M1==w.S.I) and 1 or w.S.I+1
+-- Channel switch
+D.M_TR(
+	W, 16,2,
+	TT.Switch,
+	nil,
+	{ED_C},
+	nil,
+	function(w, trg)
+		w.triggers_by_name["tm_upper_channel"]:next(true, true)
+		return false
 	end
-end
-
--- Left switch
-D.M_TR(
-	W, SW_X[1],SW_Y[1],
-	TT.Switch,
-	"sw_1",
-	{SW_CI[1]},
-	SW_C[1],
-	W_update
-)
-
--- Right switch
-D.M_TR(
-	W, SW_X[2],SW_Y[2],
-	TT.Switch,
-	SW_N[2],
-	{SW_CI[2]},
-	SW_C[2],
-	W_update
-)
-
--- Right switch
-D.M_TR(
-	W, SW_X[3],SW_Y[3],
-	TT.Switch,
-	SW_N[3],
-	{SW_CI[3]},
-	SW_C[3],
-	W_update
 )
 
 -- End trigger

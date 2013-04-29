@@ -6,10 +6,10 @@ local TT=D.TriggerType
 local W=D.__iw
 
 local SP_X, SP_Y=32,16
-local SP_C=C.Red
+local SP_C=C.Aqua
 
 local ED_X, ED_Y=32,30
-local ED_C=C.Aqua
+local ED_C=C.Green
 local ED_N="999"
 
 D.S_SP(W, SP_X,SP_Y, SP_C)
@@ -18,7 +18,7 @@ D.set_reset_callback(W, function(w)
 	w.S={
 		enclosure=w.triggers_by_name["tm_enclosure"]
 	}
-	w.S.enclosure.props.sequence[1]=Data.Color.Red
+	w.S.enclosure.props.sequence[1]=Data.Color.Aqua
 	w.S.enclosure.props.sequence[2]=Data.Color.Black
 end)
 
@@ -38,57 +38,71 @@ D.M_TR(
 	W, 32,5, TT.Timer, "tm_enclosure",
 	{0.8, 0, {C.Red, C.Black},no_sound=false,
 	{
-		{26,10, 38,10},
-		{26,11, 26,21},
-		{38,11, 38,21},
-		{26,22, 38,22}
+		{32,10, 32,10}, -- top
+		{26,16, 26,16}, -- left
+		{32,22, 32,22}, -- bottom
+		{38,16, 38,16}  -- right
 	}
 })
 
 function CH_ENC(w, c)
-	w.S.enclosure.props.sequence[1]=Data.Color.Black
-	w.S.enclosure.props.sequence[2]=c
-	w.S.enclosure:set_index(2, false, false)
+	w.S.enclosure.props.sequence[1]=c
+	w.S.enclosure.props.sequence[2]=Data.Color.Black
+	w.S.enclosure:set_index(1, false, false)
 end
 
--- Vertical
-D.M_TR(W, 32, 3, TT.Switch, "sw_top", {C.Green}, C.Red,
+local V_DUR=1.8
+local H_DUR=3.7
+
+-- Top
+local T_B=SP_C
+local T_S=C.Yellow
+D.M_TR(W, 32, 3, TT.Switch, "sw_top", {T_S}, T_B,
 	function(w, trg, _)
-		CH_ENC(w, C.Green)
+		CH_ENC(w, T_S)
 	end
 )
 D.M_TR(
 	W, 32,5, TT.Timer, "tm_top",
-	{1.8, 1, {C.Green, C.Red},
+	{V_DUR, 1, {T_B, T_S},
 	{{32,5, 32,9}}
 })
-D.M_TR(
-	W, 32,23, TT.Timer, "tm_bottom",
-	{1.8, 0, {C.Aqua, C.Black}, no_sound=true,
-	{{32,23, 32,28}}
-})
 
--- Horizontal
-D.M_TR(W, 3 ,16, TT.Switch, "sw_left" , {C.Blue}, C.Green,
+-- Left
+local L_B=T_S
+local L_S=C.Magenta
+D.M_TR(W, 3 ,16, TT.Switch, "sw_left" , {L_S}, L_B,
 	function(w, trg, _)
-		CH_ENC(w, C.Blue)
+		CH_ENC(w, L_S)
 	end
 )
-D.M_TR(W, 62,16, TT.Switch, "sw_right", {C.Aqua}, C.Blue,
-	function(w, trg, _)
-		CH_ENC(w, C.Aqua)
-	end
-)
-
 D.M_TR(
 	W, 5,16, TT.Timer, "tm_left",
-	{4.0, 1, {C.Blue, C.Green},
+	{H_DUR, 1, {L_B, L_S},
 	{{5,16, 25,16}}
 })
+
+-- Right
+local R_B=L_S
+local R_S=C.Green
+D.M_TR(W, 62,16, TT.Switch, "sw_right", {R_S}, R_B,
+	function(w, trg, _)
+		CH_ENC(w, R_S)
+	end
+)
 D.M_TR(
 	W, 38,16, TT.Timer, "tm_right",
-	{4.0, 1, {C.Blue, C.Aqua}, no_sound=true,
+	{H_DUR, 1, {R_B, R_S}, no_sound=true,
 	{{39,16, 60,16}}
+})
+
+-- Bottom
+local B_B=C.Green
+local B_S=C.Black
+D.M_TR(
+	W, 32,23, TT.Timer, "tm_bottom",
+	{V_DUR, 0, {B_B, B_S}, no_sound=true,
+	{{32,23, 32,28}}
 })
 
 -- End trigger

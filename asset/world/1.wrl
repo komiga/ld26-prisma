@@ -31,7 +31,7 @@ D.M_TR(
 	TT.Message,
 	nil,
 	{
-		"Ain't you clever. But now you're stuck here!"
+		"Aren't you clever. But now you're stuck here!"
 	}
 )
 

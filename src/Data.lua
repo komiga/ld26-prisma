@@ -63,7 +63,7 @@ ColorTable={
 
 	{0,255,255}, -- Aqua
 	{255,0,255}, -- Magenta
-	{255,128,0}, -- Yellow
+	{255,192,0}, -- Yellow
 	--{255,255,0}, -- Yellow
 
 	{96,0,255},	 -- System; purpley
@@ -89,15 +89,15 @@ ColorTable.WhiteInvisible=ColorTable[Data.Color.WhiteInvisible]
 
 ColorAccept={
 	{},
-	{false,true, true,true,true, true,true,true},
+	{false,true, true,true,true, true,true,true, true,true},
 
 	{[Color.Red]=true},
 	{[Color.Green]=true},
 	{[Color.Blue]=true},
 
-	{[Color.Aqua]=true},
-	{[Color.Magenta]=true},
-	{[Color.Yellow]=true},
+	{false,false, false,true,true, true,false,false, false,false},
+	{false,false, true,false,true, false,true,false, false,false},
+	{false,false, true,true,false, false,false,true, false,false},
 
 	{},
 	{false,true, true,true,true, true,true,true, false,true}

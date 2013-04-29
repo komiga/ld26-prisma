@@ -20,7 +20,7 @@ D.M_TR(
 	TT.Message,
 	"msg_start",
 	{
-		"Tread carefully; floors can be dangerous.",
+		"Color can be volatile.",
 		starter=true
 	}
 )
@@ -39,7 +39,7 @@ D.M_TR(
 	TT.Timer,
 	nil,
 	{
-		2.0, 1, {C.Green, ED_C},
+		1.2, 1, {C.Green, ED_C},
 		{{12,14, 14,18}}
 	}
 )
@@ -50,7 +50,7 @@ D.M_TR(
 	TT.Timer,
 	"tm_right",
 	{
-		2.0, 0, {C.Aqua, ED_C},
+		1.2, 1, {C.Red, ED_C},
 		{{18,14, 20,18}}, no_sound=true
 	}
 )
