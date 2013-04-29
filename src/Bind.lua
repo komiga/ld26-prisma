@@ -183,10 +183,12 @@ function love.keyreleased(key)
 	bind_release(key, nil)
 end
 
+-- NB: For some reason disabling the mouse module does not disable
+-- mouse events..
 function love.mousepressed(x, y, button)
-	Bind.mouse_press(x, y, button)
+	--Bind.mouse_press(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
-	Bind.mouse_release(x, y, button)
+	--Bind.mouse_release(x, y, button)
 end
