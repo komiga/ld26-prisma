@@ -51,7 +51,7 @@ end
 
 function ChangeWorld:activate(world)
 	Util.debug_sub(State.trg_debug,
-		"Trigger.ChangeWorld:activate: "..self.props.world_name
+		"ChangeWorld:activate: "..self.props.world_name
 	)
 	World.set_world(Asset.world[self.props.world_id])
 	Bind.clear_active()

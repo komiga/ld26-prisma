@@ -47,10 +47,11 @@ end
 
 function Message:activate(world)
 	if self:is_active() then
-		Util.debug_sub(State.trg_debug,
-		"Trigger.Message:activate: "..self.props.message
-	)
+		Util.debug_sub(State.trg_debug, "Message:activate")
 		if Trigger.__trg_callback(world, self, true) then
+			Util.debug_sub(State.trg_debug,
+				"Message: "..self.props.message
+			)
 			Bind.clear_active()
 			Presenter.start(self.props.message, true)
 		end
@@ -60,10 +61,11 @@ end
 
 function Message:entered(world)
 	if self:is_active() and not self.viewed then
-		Util.debug_sub(State.trg_debug,
-			"Trigger.Message:entered: "..self.props.message
-		)
+		Util.debug_sub(State.trg_debug, "Message:entered")
 		if Trigger.__trg_callback(world, self, false) then
+			Util.debug_sub(State.trg_debug,
+				"Message: "..self.props.message
+			)
 			Presenter.start(self.props.message, false)
 			self.viewed=true
 		end

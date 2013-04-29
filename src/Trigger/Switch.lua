@@ -51,7 +51,7 @@ end
 
 function Switch:activate(world)
 	Util.debug_sub(State.trg_debug,
-		"Trigger.Switch:activate: ", self.data.name
+		"Switch:activate: ", self.data.name
 	)
 	AudioManager.spawn(Asset.sound["trigger_switch_activate_"..self.sound])
 	self.sound=Util.ternary('1'==self.sound, '2', '1')

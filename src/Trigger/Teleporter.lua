@@ -50,7 +50,7 @@ end
 
 function Teleporter:activate(world)
 	if Trigger.__trg_callback(world, self) then
-		Util.debug_sub(State.trg_debug, "Trigger.Teleporter:activate")
+		Util.debug_sub(State.trg_debug, "Teleporter:activate")
 		AudioManager.spawn(Asset.sound.trigger_teleporter_activate)
 		World.current():position_player(
 			self.props.x, self.props.y,
