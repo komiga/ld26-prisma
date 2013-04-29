@@ -315,14 +315,24 @@ These descriptors are empty tables. World/Data handle hot-loading.
 --]]
 Kind.world={
 	slug="world/",
-	loader=function(root_path, name, desc)
-		local shell_data={
-			__data=nil,
-			__w_id=name,
-			__path=get_asset_path(
-				root_path, desc.path, name, nil
-			)
-		}
+	preload=function(root_path, _, asset_kind_table)
+		local dir=love.filesystem.enumerate(root_path)
+		for _, e in pairs(dir) do
+			local is_file=love.filesystem.isFile(root_path..e)
+			local name, ext=string.match(e, "(%w+)(\.wrl)")
+			--[[Util.debug(
+				"Kind.world.preload:", is_file, name, ext
+			)--]]
+			if is_file and nil~=ext then
+				asset_kind_table[name]={
+					__data=nil,
+					__w_id=name,
+					__path=get_asset_path(
+						root_path, nil, name, nil
+					)
+				}
+			end
+		end
 		return shell_data
 	end
 }
@@ -338,16 +348,22 @@ local LoadOrder={
 local function load_kind(id, root_path, kind_name, desc_table, asset_table)
 	local kind=Kind[kind_name]
 	root_path=root_path..kind.slug
-	for name, desc in pairs(desc_table) do
-		Util.tcheck(desc, "table")
-		local asset=kind.loader(root_path, name, desc)
-		if "table"==type(asset) then
-			asset.__id=id
-			asset.__name=name
-			id=id+1
+	local asset_kind_table=asset_table[kind_name]
+	if kind.preload then
+		kind.preload(root_path, desc_table, asset_kind_table)
+	end
+	if kind.loader then
+		for name, desc in pairs(desc_table) do
+			Util.tcheck(desc, "table")
+			local asset=kind.loader(root_path, name, desc)
+			if "table"==type(asset) then
+				asset.__id=id
+				asset.__name=name
+				id=id+1
+			end
+			assert(nil==asset_kind_table[name])
+			asset_kind_table[name]=asset
 		end
-		assert(nil==asset_table[kind_name][name])
-		asset_table[kind_name][name]=asset
 	end
 	return id
 end

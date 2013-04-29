@@ -57,19 +57,9 @@ sound={
 
 },
 
-world={
-	["__debug"]={},
-	["0"]={},
-	["1"]={},
-	["2"]={},
-	["3"]={},
-	["4"]={},
-	["5"]={},
-	["6"]={},
-	["7"]={},
-	["8"]={},
-	["999"]={},
-}
+-- NB: Preloading is done by AssetLoader; Data/World handle the
+-- actual hot-loading
+world={}
 
 } -- desc_root
 
