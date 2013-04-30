@@ -39,12 +39,6 @@ Binds={
 	},
 
 -- Player
-	["r"]={
-		on_release=true,
-		handler=function(_, _, _, _)
-			World.current():reset(false)
-		end
-	},
 	[" "]={
 		on_release=true,
 		handler=function(_, _, _, _)
@@ -131,6 +125,12 @@ function init(arg)
 
 	if not debug_mode_temp then
 		Core.Binds[{'w', 's', 'a', 'd'}]=Core.player_move_bind
+		Core.Binds["r"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				World.current():reset(false)
+			end
+		}
 		Core.Binds["f1"]={
 			on_release=true,
 			handler=function(_, _, _, _)
