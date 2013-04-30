@@ -20,6 +20,8 @@ D.set_reset_callback(W, function(w)
 	}
 	w.S.enclosure.props.sequence[1]=Data.Color.Aqua
 	w.S.enclosure.props.sequence[2]=Data.Color.Black
+	-- NB: Timer:reset() does not actually recolor the tile set
+	w.S.enclosure:set_index(2, false, true)
 end)
 
 -- Start trigger
