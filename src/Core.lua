@@ -131,6 +131,12 @@ function init(arg)
 				World.current():reset(false)
 			end
 		}
+		Core.Binds["`"]={
+			on_release=true,
+			handler=function(_, _, _, _)
+				World.set_world(Asset.world["9001"])
+			end
+		}
 		Core.Binds["f1"]={
 			on_release=true,
 			handler=function(_, _, _, _)
