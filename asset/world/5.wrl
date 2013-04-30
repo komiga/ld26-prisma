@@ -10,7 +10,7 @@ local SP_C=C.Red
 
 local ED_X, ED_Y=16,31
 local ED_C=C.Green
-local ED_N="5"
+local ED_N="6"
 
 D.S_SP(W, SP_X,SP_Y, SP_C)
 
