@@ -46,13 +46,14 @@ D.M_TR(
 })
 
 function CH_ENC(w, c)
-	w.S.enclosure.props.sequence[1]=c
-	w.S.enclosure.props.sequence[2]=Data.Color.Black
-	w.S.enclosure:set_index(1, false, false)
+	local index=w.S.enclosure.index
+	local next_index=Util.ternary(2==index, 1, 2)
+	w.S.enclosure.props.sequence[index]=Data.Color.Black
+	w.S.enclosure.props.sequence[next_index]=c
 end
 
-local V_DUR=1.8
-local H_DUR=3.7
+local V_DUR=1.6
+local H_DUR=3.65
 
 -- Top
 local T_B=SP_C
