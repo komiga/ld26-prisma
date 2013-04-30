@@ -5,7 +5,7 @@ local TT=D.TriggerType
 
 local W=D.__iw
 
-local SP_X, SP_Y=6,28--2,2
+local SP_X, SP_Y=2,2
 local SP_C=C.WhiteInvisible
 
 local ED_X, ED_Y=62,3
