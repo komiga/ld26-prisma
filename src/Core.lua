@@ -127,10 +127,10 @@ function init(arg)
 	Core.display_height=Gfx.getHeight()
 	Core.display_height_half=0.5*Core.display_height
 
-	Core.Binds[{'w', 's', 'a', 'd'}]=Core.player_move_bind
+	Core.Binds[{"up", "down", "left", "right"}]=Core.player_move_bind
 
 	if not debug_mode_temp then
-		Core.Binds[{"up", "down", "left", "right"}]=Core.player_move_bind
+		Core.Binds[{'w', 's', 'a', 'd'}]=Core.player_move_bind
 		Core.Binds["f1"]={
 			on_release=true,
 			handler=function(_, _, _, _)
