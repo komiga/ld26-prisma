@@ -1,8 +1,13 @@
 
 # Prisma
 
-**Prisma** is a color-component-based puzzler build over a 72-hour
+**Prisma** is a color-component-based puzzler built over a 72-hour
 timeperiod for Ludum Dare #26.
+
+## But I just want to play it!
+
+Then you are probably looking for the [Ludum Dare entry page]
+(http://www.ludumdare.com/compo/ludum-dare-26/?action=preview&uid=14542).
 
 ## License
 
