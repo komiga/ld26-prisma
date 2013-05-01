@@ -2,7 +2,7 @@
 function love.conf(t)
 	t.version="0.8.0"
 
-	t.title="Prisma - R2"
+	t.title="Prisma - R3"
 	t.author="plash"
 	t.url="http://komiga.com"
 	t.identity=t.title.."-save"
