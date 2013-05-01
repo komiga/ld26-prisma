@@ -3,6 +3,11 @@
 
 -	Merge shared code back to LÖVE kernel.
 
+## Gameplay
+
+-	Prevent action bind from triggering start message as player dies.
+	Very annoying on levels like Kiddquikk.
+(QAR)
 
 ## LD (FIXME: cleanup)
 
