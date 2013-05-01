@@ -1,0 +1,3 @@
+[submodule "asset"]
+	path = asset
+	url = git://github.com/komiga/ld26-prisma-assets.git
