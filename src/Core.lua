@@ -189,9 +189,6 @@ function init(arg)
 
 	-- assets
 	AssetLoader.load("asset/", Asset.desc_root, Asset)
-	--Hooker.init(Asset.hooklet, Asset.font.main)
-
-	--Animator.init(Asset.anim)
 	AudioManager.init(Asset.sound)
 
 	-- more systems
@@ -243,7 +240,6 @@ function update(dt)
 		Bind.update(0.0)
 	else
 		Bind.update(dt)
-		--Hooker.update(dt)
 		AudioManager.update(dt)
 		Presenter.update(dt)
 		World.current():update(dt)
