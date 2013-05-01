@@ -319,7 +319,7 @@ Kind.world={
 		local dir=love.filesystem.enumerate(root_path)
 		for _, e in pairs(dir) do
 			local is_file=love.filesystem.isFile(root_path..e)
-			local name, ext=string.match(e, "(%w+)(\.wrl)")
+			local name, ext=string.match(e, "(%w+)(.wrl)")
 			--[[Util.debug(
 				"Kind.world.preload:", is_file, name, ext
 			)--]]
