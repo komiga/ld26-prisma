@@ -1,4 +1,10 @@
-TODO
+
+## General
+
+-	Merge shared code back to LÖVE kernel.
+
+
+## LD (FIXME: cleanup)
 
 -	No tris? Lose color channels when activating sinks?
 	Sink circuits take one channel each, combine at
