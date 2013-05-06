@@ -9,6 +9,10 @@
 	Very annoying on levels like Kiddquikk.
 (QAR)
 
+-	Add pause screen and/or require the user to hold down escape to
+	close.
+(QAR)
+
 ## LD (FIXME: cleanup)
 
 -	No tris? Lose color channels when activating sinks?
@@ -16,19 +20,23 @@
 	end of sequence?
 
 Asset:
+
 -	sound.player_no_drop_channel:
 	error effect when player tries to drop last color
 	channel into sink
 
 World:
+
 -	Quick decay on world change?
 	All tiles decrease in size to center?
 	Just player?
 
 Presenter:
+
 -	Split message to fit window.
 
 Trigger:
+
 -	Recolor: change entire zones/colors to
 	another color. includes color inversion and
 	color-accept inversion.
