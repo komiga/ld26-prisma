@@ -124,7 +124,7 @@ function Unit:render()
 					Util.set_color_table(
 						Util.ternary(
 							Data.Color.Magenta==sc,
-							Data.ColorTable.Aqua, Data.ColorTable.Magenta
+							Data.ColorTable.Cyan, Data.ColorTable.Magenta
 						),
 						255
 					)

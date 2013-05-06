@@ -40,7 +40,7 @@ Color={
 	Blue=5,
 
 -- Combined player colors
-	Aqua=6,
+	Cyan=6,
 	Magenta=7,
 	Yellow=8,
 
@@ -61,7 +61,7 @@ ColorTable={
 	{0,255,0}, -- Green
 	{0,0,255}, -- Blue
 
-	{0,255,255}, -- Aqua
+	{0,255,255}, -- Cyan
 	{255,0,255}, -- Magenta
 	{255,192,0}, -- Yellow
 	--{255,255,0}, -- Yellow
@@ -78,7 +78,7 @@ ColorTable.Red=ColorTable[Data.Color.Red]
 ColorTable.Green=ColorTable[Data.Color.Green]
 ColorTable.Blue=ColorTable[Data.Color.Blue]
 
-ColorTable.Aqua=ColorTable[Data.Color.Aqua]
+ColorTable.Cyan=ColorTable[Data.Color.Cyan]
 ColorTable.Yellow=ColorTable[Data.Color.Yellow]
 ColorTable.Magenta=ColorTable[Data.Color.Magenta]
 
@@ -107,11 +107,11 @@ ColorOpposite={
 	[Color.Black]=Color.White,
 	[Color.White]=Color.Black,
 
-	[Color.Red]=Color.Aqua,
+	[Color.Red]=Color.Cyan,
 	[Color.Green]=Color.Magenta,
 	[Color.Blue]=Color.Yellow,
 
-	[Color.Aqua]=Color.Red,
+	[Color.Cyan]=Color.Red,
 	[Color.Magenta]=Color.Green,
 	[Color.Yellow]=Color.Blue,
 
@@ -143,7 +143,7 @@ ColorAddResult={
 	[Color.Green]={4,2, 8,nil,6, nil,nil,nil},
 	[Color.Blue] ={5,2, 7,6,nil, nil,nil,nil},
 
-	[Color.Aqua]   ={6,2, 2,nil,nil, nil,nil,nil},
+	[Color.Cyan]   ={6,2, 2,nil,nil, nil,nil,nil},
 	[Color.Magenta]={7,2, nil,2,nil, nil,nil,nil},
 	[Color.Yellow] ={8,2, nil,nil,2, nil,nil,nil},
 
