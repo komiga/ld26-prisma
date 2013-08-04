@@ -17,7 +17,7 @@ poke around.
 
 ## License
 
-Prisma is licensed under CC-BY-NC-ND 3.0 Unported, meaning you can
+Prisma is licensed under CC BY-NC-ND 3.0 Unported, meaning you can
 share the work **as long as**:
 
 1. **You do not use the work for commercial purposes.**
