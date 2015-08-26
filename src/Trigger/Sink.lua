@@ -11,12 +11,12 @@ require("src/Data")
 --require("src/Player")
 --require("src/World")
 
-local TriggerState=Trigger.GenericState
+local TriggerState = Trigger.GenericState
 
 -- class Sink
 
-local Sink={}
-Sink.__index=Sink
+local Sink = {}
+Sink.__index = Sink
 
 function Sink:__init(world, trd)
 	Util.tcheck(trd.props, "table")
@@ -26,22 +26,22 @@ function Sink:__init(world, trd)
 	Data.assert_is_color(trd.props[1])
 	Data.assert_is_color(trd.props[2])
 
-	self.data=trd
-	self.props=self.data.props
-	self.props.start_color=self.props[1]
-	self.props.activation_color=self.props[2]
-	self.props.circuit=self.props[3]
+	self.data = trd
+	self.props = self.data.props
+	self.props.start_color = self.props[1]
+	self.props.activation_color = self.props[2]
+	self.props.circuit = self.props[3]
 
 	self:reset()
 end
 
 function Sink:reset()
-	self.state=TriggerState.Active
-	self.color=self.props.start_color
+	self.state = TriggerState.Active
+	self.color = self.props.start_color
 end
 
 function Sink:set_active(enable)
-	self.state=Util.ternary(
+	self.state = Util.ternary(
 		enable,
 		TriggerState.Active,
 		TriggerState.Inactive
@@ -49,20 +49,20 @@ function Sink:set_active(enable)
 end
 
 function Sink:is_active()
-	return TriggerState.Inactive~=self.state
+	return TriggerState.Inactive ~= self.state
 end
 
 function Sink:is_complete()
-	return self.props.activation_color==self.color
+	return self.props.activation_color == self.color
 end
 
 function Sink:activate(world)
 	Util.debug_sub(State.trg_debug, "Sink:activate")
 	--AudioManager.spawn(Asset.sound.trigger_sink_activate)
-	local pc=Player.get_color()
-	local ac=Data.ColorAddResult[self.color][pc]
-	if nil~=ac then
-		self.color=ac
+	local pc = Player.get_color()
+	local ac = Data.ColorAddResult[self.color][pc]
+	if nil ~= ac then
+		self.color = ac
 	end
 	Util.debug_sub(State.trg_debug, "Sink:activate: color:", self.color)
 	Trigger.__trg_callback(world, self)
@@ -88,17 +88,17 @@ function Sink:render(_, px, py)
 	Util.set_color_table(Data.ColorTable[self.color], 255)
 	local x1,y1, x2,y2
 	for _, circ in pairs(self.props.circuit) do
-		x1,y1=Data.tile_rpos(circ[2],circ[3])
-		if Data.Axis.X==circ[1] then
-			x2=(circ[4]-1)*Data.TW
-			y2=y1
+		x1,y1 = Data.tile_rpos(circ[2],circ[3])
+		if Data.Axis.X == circ[1] then
+			x2 = (circ[4] - 1) * Data.TW
+			y2 = y1
 		else
-			x2=x1
-			y2=(circ[4]-1)*Data.TH
+			x2 = x1
+			y2 = (circ[4] - 1) * Data.TH
 		end
 		Gfx.rectangle("fill",
-			x1+Data.TIW, y1+Data.LIH,
-			(x2-x1)+Data.TIW, (y2-y1)+Data.TIH
+			x1 + Data.TIW, y1 + Data.LIH,
+			(x2 - x1) + Data.TIW, (y2 - y1) + Data.TIH
 		)
 	end
 end

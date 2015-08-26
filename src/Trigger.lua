@@ -5,9 +5,9 @@ require("src/Util")
 
 require("src/Data")
 
-GenericState={
-	Active=1,
-	Inactive=2
+GenericState = {
+	Active = 1,
+	Inactive = 2
 }
 
 function __trg_callback(world, trg)
@@ -24,17 +24,17 @@ require("src/Trigger/Sink")
 
 -- Trigger interface
 
-local data={
-	__initialized=false
+local data = {
+	__initialized = false
 }
 
-local instantiator={
-	[Data.TriggerType.Message]=Trigger.new_message,
-	[Data.TriggerType.ChangeWorld]=Trigger.new_change_world,
-	[Data.TriggerType.Switch]=Trigger.new_switch,
-	[Data.TriggerType.Teleporter]=Trigger.new_teleporter,
-	[Data.TriggerType.Timer]=Trigger.new_timer,
-	[Data.TriggerType.Sink]=Trigger.new_sink,
+local instantiator = {
+	[Data.TriggerType.Message] = Trigger.new_message,
+	[Data.TriggerType.ChangeWorld] = Trigger.new_change_world,
+	[Data.TriggerType.Switch] = Trigger.new_switch,
+	[Data.TriggerType.Teleporter] = Trigger.new_teleporter,
+	[Data.TriggerType.Timer] = Trigger.new_timer,
+	[Data.TriggerType.Sink] = Trigger.new_sink,
 }
 
 function new(world, trd)
@@ -49,5 +49,5 @@ end
 
 function init()
 	assert(not data.__initialized)
-	data.__initialized=true
+	data.__initialized = true
 end

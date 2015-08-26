@@ -9,32 +9,32 @@ require("src/Data")
 require("src/Presenter")
 --require("src/World")
 
-local TriggerState=Trigger.GenericState
+local TriggerState = Trigger.GenericState
 
 -- class Message
 
-local Message={}
-Message.__index=Message
+local Message = {}
+Message.__index = Message
 
 function Message:__init(world, trd)
 	Util.tcheck(trd.props, "table")
 	Util.tcheck(trd.props[1], "string")
 	Util.tcheck(trd.props.starter, "boolean", true)
 
-	self.data=trd
-	self.props=self.data.props
+	self.data = trd
+	self.props = self.data.props
 
-	self.viewed=not self.props.starter
+	self.viewed = not self.props.starter
 	self:reset()
 end
 
 function Message:reset()
-	--self.viewed=false
-	self.props.message=self.props[1]
+	--self.viewed = false
+	self.props.message = self.props[1]
 end
 
 function Message:set_active(enable)
-	self.state=Util.ternary(
+	self.state = Util.ternary(
 		enable,
 		TriggerState.Active,
 		TriggerState.Inactive
@@ -42,7 +42,7 @@ function Message:set_active(enable)
 end
 
 function Message:is_active()
-	return TriggerState.Inactive~=self.state
+	return TriggerState.Inactive ~= self.state
 end
 
 function Message:activate(world)
@@ -67,7 +67,7 @@ function Message:entered(world)
 				"Message: "..self.props.message
 			)
 			Presenter.start(self.props.message, false)
-			self.viewed=true
+			self.viewed = true
 		end
 	end
 	return self:is_active()

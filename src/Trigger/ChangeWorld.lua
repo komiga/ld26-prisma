@@ -9,36 +9,36 @@ require("src/AudioManager")
 
 --require("src/World")
 
-local TriggerState=Trigger.GenericState
+local TriggerState = Trigger.GenericState
 
 -- class ChangeWorld
 
-local ChangeWorld={}
-ChangeWorld.__index=ChangeWorld
+local ChangeWorld = {}
+ChangeWorld.__index = ChangeWorld
 
 function ChangeWorld:__init(world, trd)
 	Util.tcheck(trd.props, "table")
 	Util.tcheck(trd.props[1], "string")
 
-	self.data=trd
-	self.props=self.data.props
-	self.props.world_id=self.props[1]
-	self.props.world_name=Data.world_name(self.props.world_id)
+	self.data = trd
+	self.props = self.data.props
+	self.props.world_id = self.props[1]
+	self.props.world_name = Data.world_name(self.props.world_id)
 
 	Util.debug_sub(State.trg_debug,
 		"ChangeWorld:__init: name: ", self.props.world_name
 	)
-	assert(nil~=Asset.world[self.props.world_id])
+	assert(nil ~= Asset.world[self.props.world_id])
 
 	self:reset()
 end
 
 function ChangeWorld:reset()
-	self.state=TriggerState.Active
+	self.state = TriggerState.Active
 end
 
 function ChangeWorld:set_active(enable)
-	self.state=Util.ternary(
+	self.state = Util.ternary(
 		enable,
 		TriggerState.Active,
 		TriggerState.Inactive
@@ -46,7 +46,7 @@ function ChangeWorld:set_active(enable)
 end
 
 function ChangeWorld:is_active()
-	return TriggerState.Inactive~=self.state
+	return TriggerState.Inactive ~= self.state
 end
 
 function ChangeWorld:activate(world)
@@ -55,7 +55,7 @@ function ChangeWorld:activate(world)
 	)
 	World.set_world(Asset.world[self.props.world_id])
 	Bind.clear_active()
-	State.change_world_lock=true
+	State.change_world_lock = true
 	Trigger.__trg_callback(world, self)
 	return self:is_active()
 end
